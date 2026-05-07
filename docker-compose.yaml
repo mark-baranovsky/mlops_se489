@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  mlops_se489:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile
+    container_name: mlops_se489_app
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+    environment:
+      - PYTHONUNBUFFERED=1
+    ports:
+      - "8000:8000"

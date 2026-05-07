@@ -1,0 +1,21 @@
+site_name: Retail Demand Forecasting
+site_description: "Weekly retail product demand forecasting MLOps pipeline"
+site_author: "Stack Overflowers"
+
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.top
+    - search.highlight
+
+nav:
+  - Home: index.md
+  - Getting Started: getting_started.md
+  - API Reference: api.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - toc
