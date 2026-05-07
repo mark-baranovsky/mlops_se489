@@ -49,3 +49,8 @@ python_files = "test_*.py"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.uv.workspace]
+members = [
+    "zsh",
+]
