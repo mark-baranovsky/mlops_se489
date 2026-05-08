@@ -18,9 +18,7 @@ for path in [DATA_RAW, DATA_INTERIM, DATA_PROCESSED, MODELS_DIR]:
 BRONZE_PATH = os.path.join(DATA_INTERIM, "bronze_product_demand_raw.parquet")
 SILVER_PATH = os.path.join(DATA_INTERIM, "silver_product_demand_clean.parquet")
 GOLD_PATH = os.path.join(DATA_PROCESSED, "gold_weekly_product_demand.parquet")
-FEATURES_PATH = os.path.join(
-    DATA_PROCESSED, "gold_weekly_product_demand_features.parquet"
-)
+FEATURES_PATH = os.path.join(DATA_PROCESSED, "gold_weekly_product_demand_features.parquet")
 PRED_PATH = os.path.join(DATA_PROCESSED, "demand_predictions.parquet")
 
 print(f"Python     : {sys.version}")
