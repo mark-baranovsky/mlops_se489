@@ -1,128 +1,102 @@
 # Retail Demand Forecasting
 
-## 1\. Team Information
+## Team Information
 
-* **Team Name:** Stack Overflowers
-* **Team Members:**
+- **Team Name:** Stack Overflowers
+- **Team Members:**
+  - Ayan Ahmed — aahme147@depaul.edu
+  - John Blaszczak — jblaszc3@depaul.edu
+  - Mark Baranovsky — mbarano3@depaul.edu
+- **Course:** SE 489 — Machine Learning Engineering for Production
 
-  * Ayan Ahmed — aahme147@depaul.edu
-  * John Blaszczak — jblaszc3@depaul.edu
-  * Mark Baranovsky — mbarano3@depaul.edu
-* **Course:** SE 489
+---
 
-\---
+## Project Overview
 
-## 2\. Project Overview
+We built a machine learning pipeline that forecasts weekly product demand for a retail business. The dataset has over a million order records covering 2,160 products across 4 warehouses. The pipeline takes raw order data, cleans it, turns it into weekly summaries, builds time-series features, trains multiple models, picks the best one, and generates predictions for the following week.
 
-We built a machine learning pipeline that forecasts weekly product demand for a retail business. The dataset has over a million order records covering 2,160 products across 4 warehouses. The pipeline takes raw order data, cleans it, turns it into weekly summaries, builds time-series features, trains a few different models, picks the best one, and then generates predictions for the following week.
+**Key Objectives:**
+- Build a clean, reproducible data pipeline from raw CSV to weekly predictions
+- Compare multiple forecasting approaches and track all experiments with MLflow
+- Make the pipeline easy to run and understand by anyone on the team
 
-The reason we picked this problem is that inventory management is genuinely hard at scale. If a warehouse orders too much it ties up cash, and if it orders too little it loses sales. A decent forecasting model that runs automatically every week can make a real difference in how a business operates.
+---
 
-**Main goals:**
-
-* Build a clean, reproducible data pipeline from raw CSV to weekly predictions
-* Compare multiple forecasting approaches and track them with MLflow
-* Make sure the pipeline is easy to run and understand by anyone on the team
-
-\---
-
-## 3\. Architecture
+## Architecture Diagram
 
 ```
 Raw CSV
    │
    ▼
-01\_bronze\_ingestion       →  data/interim/bronze\_\*.parquet
+01_bronze_ingestion       →  data/interim/bronze_*.parquet
    │
    ▼
-02\_silver\_cleaning        →  data/interim/silver\_\*.parquet
+02_silver_cleaning        →  data/interim/silver_*.parquet
    │
    ▼
-03\_gold\_aggregation       →  data/processed/gold\_weekly\_\*.parquet
+03_gold_aggregation       →  data/processed/gold_weekly_*.parquet
    │
    ▼
-04\_feature\_engineering    →  data/processed/gold\_weekly\_\*\_features.parquet
+04_feature_engineering    →  data/processed/gold_weekly_*_features.parquet
    │
    ▼
-05\_model\_training         →  models/champion\_model.pkl + MLflow
+05_model_training         →  models/champion_model.pkl + MLflow
    │
    ▼
-06\_batch\_prediction       →  data/processed/demand\_predictions.parquet
+06_batch_prediction       →  data/processed/demand_predictions.parquet
 ```
 
-\---
+---
 
-## 4\. Phase Deliverables
+## Phase Deliverables
 
-* [PHASE1.md](./PHASE1.md) — Project Design and Model Development
+- [PHASE1.md](PHASE1.md) — Project Design & Model Development
+- [PHASE2.md](PHASE2.md) — Containerization & Monitoring
+- [PHASE3.md](PHASE3.md) — CI/CD & Deployment
 
-\---
+---
 
-## 5\. Setup Instructions
+## Setup Instructions
 
-### Requirements
+### Prerequisites
+- Python 3.11+
+- Git
 
-* Python 3.11
-* Conda or venv
-
-### Clone the repo
-
-```bash
-git clone https://github.com/aahme147/mlops\_se489.git
-cd mlops\_se489
-```
-
-### Create the environment
-
-**Option A — venv (recommended for this project):**
+### Installation
 
 ```bash
+git clone https://github.com/aahme147/mlops_se489.git
+cd mlops_se489
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-pip install -e ".\[dev]"
-```
-
-**Option B — conda:**
-
-```bash
-conda create -n retail-demand python=3.11 -y
-conda activate retail-demand
-pip install -r requirements.txt
-```
-
-### Install pre-commit hooks
-
-```bash
+pip install -e ".[dev]"
 pre-commit install
 ```
 
-### Get the data
+### Get the Data
 
 Download from Kaggle:
 [Historical Product Demand](https://www.kaggle.com/datasets/felixzhao/productdemandforecasting)
 
-Put the CSV file here:
-
+Place the CSV file at:
 ```
 data/raw/Historical Product Demand.csv
 ```
 
-### Run the pipeline
-
-Run notebooks in order from the project root:
+### Running the Pipeline
 
 ```bash
-python notebooks/00\_setup.py
-python notebooks/01\_bronze\_ingestion\_product\_demand.py
-python notebooks/02\_silver\_cleaning\_product\_demand.py
-python notebooks/03\_gold\_weekly\_aggregation\_product\_demand.py
-python notebooks/04\_gold\_feature\_engineering\_product\_demand.py
-python notebooks/05\_model\_training\_product\_demand.py
-python notebooks/06\_batch\_prediction\_product\_demand.py
+python notebooks/00_setup.py
+python notebooks/01_bronze_ingestion_product_demand.py
+python notebooks/02_silver_cleaning_product_demand.py
+python notebooks/03_gold_weekly_aggregation_product_demand.py
+python notebooks/04_gold_feature_engineering_product_demand.py
+python notebooks/05_model_training_product_demand.py
+python notebooks/06_batch_prediction_product_demand.py
 ```
 
-### View MLflow runs
+### View MLflow Runs
 
 ```bash
 mlflow ui
@@ -130,67 +104,104 @@ mlflow ui
 
 Open http://127.0.0.1:5000 in your browser.
 
-### Run tests
+### Run Tests
 
 ```bash
 make test
 ```
 
-Or directly:
+Or:
 
 ```bash
 pytest tests/ -v
 ```
 
-### Run linting
+### Run Linting
 
 ```bash
 make lint
 ```
 
-Or directly:
+---
 
-```bash
-ruff check .
+## Technology Stack
+
+### Core Dependencies
+- **pandas** >= 2.2.0 — Data manipulation and pipeline
+- **numpy** >= 1.26.0 — Numerical computing
+- **scikit-learn** >= 1.5.0 — Random Forest and Gradient Boosting models
+- **prophet** — Time-series forecasting (third-party requirement)
+- **mlflow** >= 2.16.0 — Experiment tracking and model logging
+- **joblib** >= 1.4.0 — Model persistence
+
+### Development Tools
+- **pytest** >= 8.0 — Testing framework
+- **ruff** >= 0.6.0 — Linting and formatting
+- **mypy** >= 1.11 — Static type checking
+- **pre-commit** >= 3.8 — Git hooks
+
+---
+
+## Project Structure
+
+```
+mlops_se489/
+├── notebooks/               # Pipeline scripts run in order
+│   ├── 00_setup.py
+│   ├── 01_bronze_ingestion_product_demand.py
+│   ├── 02_silver_cleaning_product_demand.py
+│   ├── 03_gold_weekly_aggregation_product_demand.py
+│   ├── 04_gold_feature_engineering_product_demand.py
+│   ├── 05_model_training_product_demand.py
+│   └── 06_batch_prediction_product_demand.py
+├── data/
+│   ├── raw/                 # Original CSV — never modified
+│   ├── interim/             # Bronze and Silver parquet files
+│   └── processed/           # Gold, features, predictions
+├── models/                  # Trained model artifacts
+├── tests/                   # Pytest test suite
+├── src/mlops_se489/         # Reusable Python package
+├── PHASE1.md
+├── PHASE2.md
+├── PHASE3.md
+├── CONTRIBUTING.md
+├── Makefile
+├── pyproject.toml
+└── requirements.txt
 ```
 
-\---
+---
 
-## 6\. Branching Strategy
+## Model Results
 
-We follow GitHub Flow:
+| Model | Val RMSE | Val MAE |
+|---|---|---|
+| Baseline (mean lag) | 50,753 | 9,277 |
+| Random Forest | 42,479 | 8,578 |
+| Gradient Boosting | 42,899 | 8,106 |
+| Prophet (top product) | 516 | 326 |
 
-```
-main
- └── dev
-      ├── feature/bronze-ingestion
-      ├── feature/silver-cleaning
-      ├── feature/model-training
-      └── feature/readme
-```
+**Champion model:** Random Forest — val RMSE 42,479
 
-Never commit directly to main. Always branch off dev, do your work, open a PR, get one teammate to review, then merge into dev. When a phase is complete dev gets merged into main.
+---
 
-\---
+## Contribution Summary
 
-## 7\. Who Did What
+- **Ayan Ahmed** — Pipeline architecture, data ingestion, cleaning, MLflow setup, GitHub
+- **John Blaszczak** — Feature engineering, model training, Prophet integration, batch prediction
+- **Mark Baranovsky** — Documentation, README, PHASE1.md, data quality checks
 
-* **Ayan Ahmed** — pipeline architecture, bronze and silver notebooks, MLflow setup, GitHub, project structure
-* **John Blaszczak** — feature engineering, model training, Prophet integration, batch prediction
-* **Mark Baranovsky** — data quality checks, README, documentation, AWS pipeline setup
+---
 
-\---
+## References
 
-## 8\. References
+- Dataset: [Historical Product Demand on Kaggle](https://www.kaggle.com/datasets/felixzhao/productdemandforecasting)
+- Project structure: [Cookiecutter MLOps SE489](https://github.com/Alizadeh-DePaul/cookiecutter-mlops-se489)
+- Third-party package: [Prophet by Meta](https://facebook.github.io/prophet/)
+- [PHASE1.md](PHASE1.md) — Phase 1 deliverables
+- [PHASE2.md](PHASE2.md) — Phase 2 deliverables
+- [PHASE3.md](PHASE3.md) — Phase 3 deliverables
 
-* Dataset: [Historical Product Demand on Kaggle](https://www.kaggle.com/datasets/felixzhao/productdemandforecasting)
-* Libraries: pandas, scikit-learn, MLflow, Prophet
-* Project structure: [Cookiecutter MLOps SE489](https://github.com/Alizadeh-DePaul/cookiecutter-mlops-se489)
-* Third-party package: [Prophet by Meta](https://facebook.github.io/prophet/)
-
-\---
-
-## 9\. License
+## License
 
 MIT
-
