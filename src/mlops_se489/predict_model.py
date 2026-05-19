@@ -1,41 +1,56 @@
-"""Model inference entrypoint."""
+"""Model training and evaluation utilities for the retail demand forecasting pipeline.
+
+This module provides helper functions for training scikit-learn models,
+evaluating their performance, and selecting the champion model.
+"""
 
 from __future__ import annotations
 
-import argparse
-from pathlib import Path
+import logging
 
-from mlops_se489.config import MODELS_DIR, PROCESSED_DATA_DIR
-from mlops_se489.logging_config import get_logger, setup_logging
-from mlops_se489.models.model import Model
+import numpy as np
+import pandas as pd
+from sklearn.metrics import mean_absolute_error, mean_squared_error
 
-logger = get_logger(__name__)
-
-
-def predict(model_path: Path, input_path: Path, output_path: Path) -> None:
-    """Load a trained model and write predictions for ``input_path`` to ``output_path``."""
-    logger.info("Loading model from %s", model_path)
-    model = Model.load(model_path)
-
-    logger.info("Scoring %s", input_path)
-    _ = model  # replace with: df = pd.read_csv(input_path); preds = model.predict(df)
-
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    logger.info("Writing predictions to %s", output_path)
+logger = logging.getLogger(__name__)
 
 
-def main() -> None:
-    """CLI entrypoint for batch prediction."""
-    parser = argparse.ArgumentParser(description="Generate predictions from a trained model")
-    parser.add_argument("--model-path", type=Path, default=MODELS_DIR / "model.joblib")
-    parser.add_argument("--input", type=Path, default=PROCESSED_DATA_DIR / "test.csv")
-    parser.add_argument("--output", type=Path, default=Path("predictions.csv"))
-    args = parser.parse_args()
+def compute_rmse(y_true: pd.Series, y_pred: np.ndarray) -> float:
+    """Compute Root Mean Squared Error.
 
-    setup_logging()
-    predict(args.model_path, args.input, args.output)
-    logger.info("Prediction complete")
+    Args:
+        y_true: Ground truth target values.
+        y_pred: Predicted values from the model.
+
+    Returns:
+        RMSE as a float.
+    """
+    return float(np.sqrt(mean_squared_error(y_true, y_pred)))
 
 
-if __name__ == "__main__":
-    main()
+def compute_mae(y_true: pd.Series, y_pred: np.ndarray) -> float:
+    """Compute Mean Absolute Error.
+
+    Args:
+        y_true: Ground truth target values.
+        y_pred: Predicted values from the model.
+
+    Returns:
+        MAE as a float.
+    """
+    return float(mean_absolute_error(y_true, y_pred))
+
+
+def select_champion(results: dict[str, tuple[float, str, object]]) -> str:
+    """Select the champion model based on lowest validation RMSE.
+
+    Args:
+        results: Dictionary mapping model name to a tuple of
+            (val_rmse, run_id, fitted_pipeline).
+
+    Returns:
+        Name of the champion model.
+    """
+    champion = min(results, key=lambda k: results[k][0])
+    logger.info("Champion model selected: %s (val RMSE=%.1f)", champion, results[champion][0])
+    return champion

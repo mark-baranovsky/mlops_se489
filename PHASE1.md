@@ -29,6 +29,8 @@ Once the data is clean, we aggregate it from individual orders up to weekly dema
 For modeling we tried four different approaches. The first is a simple baseline that just averages the last four weeks of demand. We then trained a Random Forest and a Gradient Boosting model using scikit-learn, both with median imputation for the lag features that are missing at the start of each product history. Finally we used Prophet, which is Meta's open-source time-series library, on the single most active product in the dataset. Prophet is the required third-party package for the course.
  
 All four runs are tracked in MLflow. We log parameters, metrics, and model artifacts for each one, and at the end we tag the best model as the champion and save it to disk. The batch prediction notebook loads that model and generates next-week forecasts for every product-warehouse pair that was active in the most recent week.
+
+> Note: Only 3 predictions are generated because batch prediction runs on the most recent week (2017-01-09). Only 3 warehouse-product combinations had active orders that week. All 363,139 rows were used for training and feature engineering.
  
 **Success metrics:**
 - Validation RMSE below the mean-lag baseline
