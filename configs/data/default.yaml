@@ -1,0 +1,4 @@
+raw_file: Historical Product Demand.csv
+date_column: Date
+demand_column: Order_Demand
+split_date: "2016-10-01"
