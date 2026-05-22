@@ -12,6 +12,8 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import mlflow
 import pandas as pd
+import ipdb
+ipdb.set_trace()
 
 logging.basicConfig(
     level=logging.INFO,
@@ -43,6 +45,7 @@ def generate_comparison_chart(output_path: Path = REPORTS_DIR) -> str:
 
     experiment = client.get_experiment_by_name(EXPERIMENT_NAME)
     if experiment is None:
+        breakpoint() 
         raise ValueError(f"Experiment '{EXPERIMENT_NAME}' not found. Run training first.")
 
     runs = client.search_runs(
@@ -66,6 +69,7 @@ def generate_comparison_chart(output_path: Path = REPORTS_DIR) -> str:
             })
 
     if not data:
+        breakpoint()  # Debugging: Check if runs have val_rmse metrics
         raise ValueError("No val_rmse metrics found in runs.")
 
     df = pd.DataFrame(data).sort_values("val_rmse")

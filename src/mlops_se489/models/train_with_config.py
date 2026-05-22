@@ -27,6 +27,9 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error
 from sklearn.pipeline import Pipeline
 import joblib
 
+import ipdb
+ipdb.set_trace()
+
 log = logging.getLogger(__name__)
 
 
@@ -78,6 +81,15 @@ def train(cfg: DictConfig) -> None:
     df_val = df[df["week_start_date"] >= cfg.experiment.split_date].copy()
 
     log.info("Train rows: %d | Val rows: %d", len(df_train), len(df_val))
+
+    if len(df_val) == 0:
+        breakpoint()
+        raise ValueError(f"Validation set is empty")
+    
+    if len(df_train) == 0:
+        breakpoint()
+        raise ValueError(f"Training set is empty")
+
 
     X_train = df_train[FEATURE_COLS]
     y_train = df_train[TARGET_COL]

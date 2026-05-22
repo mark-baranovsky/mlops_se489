@@ -12,7 +12,7 @@ PRED_PATH     = os.path.join(BASE_DIR, "data", "processed", "demand_predictions.
 CHAMPION_PATH = os.path.join(BASE_DIR, "models", "champion_model.pkl")
 CHAMPION_NAME = "champion"
 CHAMPION_RMSE = 0.0
-
+import ipdb
 
 # Start profiling
 profiler = cProfile.Profile()
