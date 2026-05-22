@@ -94,5 +94,5 @@ profiler.disable()
 stats = pstats.Stats(profiler)
 print(f"Total Time: {stats.total_tt} seconds")
 
-profiler.dump_stats("artifacts\profiling\profiler_batch_prediction.prof")
+profiler.dump_stats("data\processed\profiler_batch_prediction.prof")
 
