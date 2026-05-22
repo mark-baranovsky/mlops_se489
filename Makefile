@@ -15,11 +15,14 @@ dev: install
 data:
 	python -m mlops_se489.data.make_dataset
 
+features:
+	python -m mlops_se489.features.build_features
+
 train:
-	python -m mlops_se489.train_model
+	python -m mlops_se489.models.train_model
 
 predict:
-	python -m mlops_se489.predict_model
+	python -m mlops_se489.models.predict_model
 
 test:
 	pytest tests/
