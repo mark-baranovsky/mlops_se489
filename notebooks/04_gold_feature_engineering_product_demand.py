@@ -4,20 +4,14 @@ from datetime import datetime
 import pandas as pd
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-GOLD_PATH = os.path.join(
-    BASE_DIR, "data", "processed", "gold_weekly_product_demand.parquet"
-)
-FEATURES_PATH = os.path.join(
-    BASE_DIR, "data", "processed", "gold_weekly_product_demand_features.parquet"
-)
+GOLD_PATH = os.path.join(BASE_DIR, "data", "processed", "gold_weekly_product_demand.parquet")
+FEATURES_PATH = os.path.join(BASE_DIR, "data", "processed", "gold_weekly_product_demand_features.parquet")
 
 print(f"Input  : {GOLD_PATH}")
 print(f"Output : {FEATURES_PATH}")
 
 df = pd.read_parquet(GOLD_PATH)
-df = df.sort_values(["warehouse", "product_code", "week_start_date"]).reset_index(
-    drop=True
-)
+df = df.sort_values(["warehouse", "product_code", "week_start_date"]).reset_index(drop=True)
 
 print(f"\nRows loaded from Gold : {len(df):,}")
 print(df.head(5).to_string())
@@ -46,9 +40,7 @@ df["yoy_demand_change"] = df["lag_1_week_demand"] - df["lag_52_week_demand"]
 
 df["yoy_demand_pct_change"] = df.apply(
     lambda row: (
-        (row["lag_1_week_demand"] - row["lag_52_week_demand"])
-        / row["lag_52_week_demand"]
-        * 100
+        (row["lag_1_week_demand"] - row["lag_52_week_demand"]) / row["lag_52_week_demand"] * 100
         if pd.notna(row["lag_52_week_demand"]) and row["lag_52_week_demand"] != 0
         else None
     ),

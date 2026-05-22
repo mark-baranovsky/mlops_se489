@@ -5,9 +5,7 @@ import pandas as pd
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 RAW_FILE_PATH = os.path.join(BASE_DIR, "data", "raw", "Historical Product Demand.csv")
-BRONZE_PATH = os.path.join(
-    BASE_DIR, "data", "interim", "bronze_product_demand_raw.parquet"
-)
+BRONZE_PATH = os.path.join(BASE_DIR, "data", "interim", "bronze_product_demand_raw.parquet")
 
 print(f"Source file  : {RAW_FILE_PATH}")
 print(f"Target file  : {BRONZE_PATH}")
