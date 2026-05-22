@@ -139,6 +139,15 @@ def clean_silver(bronze_path: Path = BRONZE_PATH, output_path: Path = SILVER_PAT
     return df_silver
 
 
+def process_data(
+    raw_file: Path = RAW_FILE,
+    bronze_path: Path = BRONZE_PATH,
+    silver_path: Path = SILVER_PATH,
+) -> pd.DataFrame:
+    """Run the full Bronze and Silver processing pipeline."""
+    ingest_bronze(raw_file=raw_file, output_path=bronze_path)
+    return clean_silver(bronze_path=bronze_path, output_path=silver_path)
+
+
 if __name__ == "__main__":
-    ingest_bronze()
-    clean_silver()
+    process_data()
