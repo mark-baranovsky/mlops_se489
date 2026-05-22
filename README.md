@@ -122,7 +122,44 @@ pytest tests/ -v
 make lint
 ```
 
----
+### Docker
+
+#### Install Docker
+- Install Docker Desktop: https://docs.docker.com/get-docker/
+- Start Docker Desktop before building or running images.
+
+#### Build the image
+From the repository root:
+
+```bash
+docker build -f dockerfiles/Dockerfile -t mlops_se489 .
+```
+
+#### Run the container
+Mount the model artifact directory so trained models persist outside the container:
+
+```bash
+docker run -it --rm -v ${PWD}/models:/app/models -v ${PWD}/data:/app/data mlops_se489
+```
+
+On Windows PowerShell, use:
+
+```powershell
+docker run -it --rm -v ${PWD}/models:/app/models -v ${PWD}/data:/app/data mlops_se489
+```
+
+Or simply use docker-compose
+
+```powershell
+docker compose up
+```
+
+The container entrypoint runs the training module by default. If you want to run a specific command inside the image, use:
+
+```bash
+docker run -it --rm -v ${PWD}/models:/app/models -v ${PWD}/data:/app/data mlops_se489 python -m mlops_se489.models.train_model
+```
+
 
 ## Technology Stack
 
