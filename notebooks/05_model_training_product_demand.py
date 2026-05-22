@@ -267,7 +267,7 @@ if __name__ == "__main__":
     stats = pstats.Stats(profiler)
     print(f"Total Time: {stats.total_tt} seconds")
 
-    profiler.dump_stats("artifacts\profiling\profiler_model_training.prof")
+    profiler.dump_stats("data\processed\profiler_model_training.prof")
 
 
 
