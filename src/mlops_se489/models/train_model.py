@@ -20,6 +20,8 @@ from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
 from sklearn.impute import SimpleImputer
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 from sklearn.pipeline import Pipeline
+import ipdb
+ipdb.set_trace()
 
 logging.basicConfig(
     level=logging.INFO,
@@ -283,8 +285,12 @@ def run_training(
     """
     logger.info("Starting model training pipeline")
 
+    logger.info("Expected features file: {features_path}")
+      # Debugging: Check file paths and existence
     if not features_path.exists():
-        raise FileNotFoundError(f"Features file not found: {features_path}")
+        breakpoint()
+        logger.error("Features file not found: {features_path}")
+        raise FileNotFoundError(f"Features file not found: {features_path}. Run pipeline previous stage.")
 
     df = pd.read_parquet(features_path)
     df["week_start_date"] = pd.to_datetime(df["week_start_date"])

@@ -13,6 +13,8 @@ from pathlib import Path
 import joblib
 import numpy as np
 import pandas as pd
+import ipdb
+ipdb.set_trace()
 
 logging.basicConfig(
     level=logging.INFO,
@@ -62,8 +64,10 @@ def run_batch_prediction(
     logger.info("Starting batch prediction pipeline")
 
     if not features_path.exists():
+        breakpoint()  # Debugging: Check file paths and existence
         raise FileNotFoundError(f"Features file not found: {features_path}")
     if not champion_path.exists():
+        breakpoint()  # Debugging: Check file paths and existence
         raise FileNotFoundError(f"Champion model not found: {champion_path}")
 
     model = joblib.load(champion_path)
