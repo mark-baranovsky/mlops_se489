@@ -42,9 +42,9 @@ PYTHONPATH=/app/src
 - [x] **Logging for Debugging**: Structured logging implemented at all critical points in src/ modules
 - [x] **Model Assertion Checks**: Assertions added to catch data and model anomalies
 - [x] **Training Validation**: NaN detection, shape validation, and row count checks in pipeline
-- [ ] **Debugging Tools**: Set up pdb/ipdb for interactive debugging
-- [ ] **Debug Scenario 1**: Create example scenario and solution document
-- [ ] **Debug Scenario 2**: Create example scenario and solution document
+- [x] **Debugging Tools**: Set up pdb/ipdb for interactive debugging
+- [x] **Debug Scenario 1**: Create example scenario and solution document
+- [x] **Debug Scenario 2**: Create example scenario and solution document
 
 **Owner: John Blaszczak**
 
@@ -53,28 +53,43 @@ PYTHONPATH=/app/src
 assert len(df_preds) > 0, "No predictions generated"
 assert (df_preds["predicted_demand"] < 0).sum() == 0, "Negative predictions found"
 ```
+**Debugging Tools**
+ipdb added to several important files to allow for debugging.
 
 **Debug scenario 1 — FileNotFoundError:**
-If the pipeline raises `FileNotFoundError`, it means a previous stage did not run. Each module logs the exact path before raising the error.
+If the pipeline raises `FileNotFoundError`, it means a previous stage did not run. Each module logs the exact path before raising the error. Additonal error logging messages added to train_model.py.
 
 **Debug scenario 2 — Empty validation set:**
 If `AssertionError: Validation set is empty` is raised, override SPLIT_DATE:
 ```bash
 python src/mlops_se489/models/train_with_config.py experiment.split_date=2016-06-01
 ```
-
+Additonal error logging messages added to train_with_config.py.
 ---
 
 ## 3. Profiling & Optimization
 
 - [x] **CPU Profiling**: Use cProfile to profile training and inference
+          cProfiling added to 05_model_training and 06_batch_prediction.
 - [x] **Memory Profiling**: Profile memory usage with memory_profiler or similar
+          Memory profiler logging added to 05_model_training.
+          ![Memory profiler](reports/figures/screenshots/training_memory_profile.png)
 - [NA] **GPU Profiling (if applicable)**: Use PyTorch Profiler or similar for GPU workloads
 - [x] **Profiling Results**: Document baseline profiling results and bottlenecks identified
+        Main bottleneck is waithing for each model to run before progressing to the next one.
+        Baseline Model training Total Time: 150.740841 seconds.
+        ![Model Training](reports/figures/screenshots/cprofil_model_training.png)
+        ![Batch Prediction](reports/figures/screenshots/cprofile_batch_prediction.png)
 - [x] **Optimization 1**: Implement and measure optimization (e.g., vectorization, caching)
+        # Optimization 1: Added helper functions for parallel model training, random forest, gradient boosting and prophet models all compute in parallel.
 - [x] **Optimization 2**: Implement and measure additional optimization
+        #Optimization 2 seperate logging functions for gradient boosting and prophet
 - [x] **Performance Benchmarks**: Document before/after performance metrics
+        Total Time: 98.57885019999988 seconds
 - [x] **Optimization Documentation**: Explain each optimization and its impact
+        Parallel model training improved performance around ~50%.
+        Implementing helper logging functions should improve accuracy of mlflow logs by decreasing extra tasks that don't directly help with testing the models.
+      
 
 **Owner: John Blaszczak**
 
