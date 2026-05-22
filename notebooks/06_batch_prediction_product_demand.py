@@ -3,6 +3,8 @@ import joblib
 import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
+import cProfile
+import pstats
 
 BASE_DIR      = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 FEATURES_PATH = os.path.join(BASE_DIR, "data", "processed", "gold_weekly_product_demand_features.parquet")
@@ -10,6 +12,12 @@ PRED_PATH     = os.path.join(BASE_DIR, "data", "processed", "demand_predictions.
 CHAMPION_PATH = os.path.join(BASE_DIR, "models", "champion_model.pkl")
 CHAMPION_NAME = "champion"
 CHAMPION_RMSE = 0.0
+import ipdb
+
+# Start profiling
+profiler = cProfile.Profile()
+profiler.enable()
+
 
 print(f"Features file       : {FEATURES_PATH}")
 print(f"Predictions file    : {PRED_PATH}")
@@ -79,4 +87,12 @@ print(df_preds.nlargest(10, "predicted_demand")[[
 
 os.makedirs(os.path.dirname(PRED_PATH), exist_ok=True)
 df_preds.to_parquet(PRED_PATH, index=False)
+
+# Stop profiling
+profiler.disable()
+
+stats = pstats.Stats(profiler)
+print(f"Total Time: {stats.total_tt} seconds")
+
+profiler.dump_stats("data\processed\profiler_batch_prediction.prof")
 
