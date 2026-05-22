@@ -2,15 +2,21 @@
 # Multi-stage build for Retail Demand Forecasting
 
 # Stage 1: Builder
-FROM python:3.11-slim as builder
+FROM python:3.11-slim-bookworm AS builder
+
+RUN apt update && \
+    apt install --no-install-recommends -y build-essential gcc && \
+    apt clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir --user -r requirements.txt
+COPY requirements.txt pyproject.toml ./
+
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install --user -r requirements.txt
 
 # Stage 2: Runtime
-FROM python:3.11-slim
+FROM builder AS runtime
 
 WORKDIR /app
 
@@ -24,9 +30,9 @@ ENV PYTHONUNBUFFERED=1
 # Copy project code
 COPY . .
 
-# Install the package
-RUN pip install --no-cache-dir -e .
+# Install the package itself without reinstalling dependencies
+RUN pip install --user --no-deps -e .
 
 EXPOSE 8000
 
-ENTRYPOINT ["python", "-m", "mlops_se489.train_model"]
+ENTRYPOINT ["sh", "-u", "pipeline.sh"]
