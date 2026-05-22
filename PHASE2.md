@@ -67,11 +67,14 @@ python src/mlops_se489/models/train_with_config.py experiment.split_date=2016-06
 
 ## 3. Profiling & Optimization
 
-- [ ] **CPU Profiling**: Use cProfile to profile training and inference
-- [ ] **Memory Profiling**: Profile memory usage with memory_profiler
-- [ ] **Profiling Results**: Document baseline profiling results and bottlenecks
-- [ ] **Performance Benchmarks**: Document before/after performance metrics
-- [ ] **Optimization Documentation**: Explain each optimization and its impact
+- [x] **CPU Profiling**: Use cProfile to profile training and inference
+- [x] **Memory Profiling**: Profile memory usage with memory_profiler or similar
+- [NA] **GPU Profiling (if applicable)**: Use PyTorch Profiler or similar for GPU workloads
+- [x] **Profiling Results**: Document baseline profiling results and bottlenecks identified
+- [x] **Optimization 1**: Implement and measure optimization (e.g., vectorization, caching)
+- [x] **Optimization 2**: Implement and measure additional optimization
+- [x] **Performance Benchmarks**: Document before/after performance metrics
+- [x] **Optimization Documentation**: Explain each optimization and its impact
 
 **Owner: John Blaszczak**
 
