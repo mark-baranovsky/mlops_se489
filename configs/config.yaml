@@ -1,0 +1,17 @@
+defaults:
+  - data: default
+  - model: random_forest
+  - _self_
+
+experiment:
+  name: demand_forecast_v1
+  split_date: "2016-10-01"
+
+paths:
+  raw_data: data/raw/Historical Product Demand.csv
+  bronze: data/interim/bronze_product_demand_raw.parquet
+  silver: data/interim/silver_product_demand_clean.parquet
+  gold: data/processed/gold_weekly_product_demand.parquet
+  features: data/processed/gold_weekly_product_demand_features.parquet
+  predictions: data/processed/demand_predictions.parquet
+  models: models/
