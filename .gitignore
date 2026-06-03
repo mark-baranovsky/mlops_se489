@@ -147,3 +147,14 @@ Thumbs.db
 
 # Project specific
 config/local_settings.py
+
+# Generated pipeline artifacts
+data/interim/
+data/processed/
+models/
+logs/
+mlruns/
+mlflow.db
+
+# Profiling binary output
+reports/profiling/*.prof
