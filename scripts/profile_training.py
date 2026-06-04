@@ -26,8 +26,8 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from mlops_se489.logging_config import get_logger, setup_logging
-from mlops_se489.models.train_model import run_training
+from mlops_se489.logging_config import get_logger, setup_logging  # noqa: E402
+from mlops_se489.models.train_model import run_training  # noqa: E402
 
 setup_logging()
 logger = get_logger(__name__)

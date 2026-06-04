@@ -35,7 +35,7 @@ class Model(BaseModel):
         """
         self.config = config or {}
 
-    def fit(self, X: Any, y: Any) -> None:
+    def fit(self, X: Any, y: Any) -> "Model":
         """Fit the model.
 
         Raises:

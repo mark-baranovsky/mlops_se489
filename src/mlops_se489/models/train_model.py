@@ -102,7 +102,11 @@ def train_baseline(df_train: pd.DataFrame, df_val: pd.DataFrame) -> tuple[float,
         mlflow.log_metric("val_mae", val_mae)
         mlflow.set_tag("is_champion", "false")
 
-        run_id = mlflow.active_run().info.run_id
+        active_run = mlflow.active_run()
+        if active_run is None:
+            raise RuntimeError("MLflow active run was not found.")
+        run_id = active_run.info.run_id
+        
 
     logger.info(
         "Baseline — train RMSE: %.1f | val RMSE: %.1f | val MAE: %.1f",
@@ -163,7 +167,11 @@ def train_random_forest(
         mlflow.sklearn.log_model(pipeline, "random_forest_model")
         mlflow.set_tag("is_champion", "false")
 
-        run_id = mlflow.active_run().info.run_id
+        
+        active_run = mlflow.active_run()
+        if active_run is None:
+            raise RuntimeError("MLflow active run was not found.")
+        run_id = active_run.info.run_id
 
     logger.info(
         "Random Forest — train RMSE: %.1f | val RMSE: %.1f | val MAE: %.1f",
@@ -229,7 +237,10 @@ def train_gradient_boosting(
         mlflow.sklearn.log_model(pipeline, "gradient_boosting_model")
         mlflow.set_tag("is_champion", "false")
 
-        run_id = mlflow.active_run().info.run_id
+        active_run = mlflow.active_run()
+        if active_run is None:
+            raise RuntimeError("MLflow active run was not found.")
+        run_id = active_run.info.run_id
 
     logger.info(
         "GBT — train RMSE: %.1f | val RMSE: %.1f | val MAE: %.1f",
@@ -287,7 +298,10 @@ def train_prophet(df_train: pd.DataFrame, df_val: pd.DataFrame) -> tuple[float, 
         mlflow.set_tag("is_champion", "false")
         mlflow.set_tag("scope", "single_product_demo")
 
-        run_id = mlflow.active_run().info.run_id
+        active_run = mlflow.active_run()
+        if active_run is None:
+            raise RuntimeError("MLflow active run was not found.")
+        run_id = active_run.info.run_id
 
     logger.info(
         "Prophet — product=%s | val RMSE: %.1f | val MAE: %.1f",

@@ -8,7 +8,6 @@ to prevent log files from growing forever.
 from __future__ import annotations
 
 import logging
-import sys
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 from typing import Literal
@@ -70,9 +69,7 @@ def setup_logging(
         encoding="utf-8",
     )
     file_handler.setLevel(level)
-    file_handler.setFormatter(
-        logging.Formatter(fmt=DEFAULT_FORMAT, datefmt=DEFAULT_DATEFMT)
-    )
+    file_handler.setFormatter(logging.Formatter(fmt=DEFAULT_FORMAT, datefmt=DEFAULT_DATEFMT))
 
     root_logger.addHandler(console_handler)
     root_logger.addHandler(file_handler)
