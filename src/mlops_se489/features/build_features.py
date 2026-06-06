@@ -61,22 +61,28 @@ def build_gold(silver_path: Path = SILVER_PATH, output_path: Path = GOLD_PATH) -
     orders = df[df["demand_type"] == "order"]
     returns = df[df["demand_type"] == "return"]
 
-    weekly_orders = orders.groupby(group_cols)["order_demand"].agg(
-        weekly_order_demand="sum",
-        avg_daily_order_demand="mean",
-        max_daily_order_demand="max",
-        min_daily_order_demand="min",
-        positive_order_count="count",
-    ).reset_index()
+    weekly_orders = (
+        orders.groupby(group_cols)["order_demand"]
+        .agg(
+            weekly_order_demand="sum",
+            avg_daily_order_demand="mean",
+            max_daily_order_demand="max",
+            min_daily_order_demand="min",
+            positive_order_count="count",
+        )
+        .reset_index()
+    )
 
-    weekly_returns = returns.groupby(group_cols)["order_demand"].agg(
-        weekly_return_demand="sum"
-    ).reset_index()
+    weekly_returns = returns.groupby(group_cols)["order_demand"].agg(weekly_return_demand="sum").reset_index()
 
-    weekly_all = df.groupby(group_cols)["order_demand"].agg(
-        weekly_net_demand="sum",
-        order_count="count",
-    ).reset_index()
+    weekly_all = (
+        df.groupby(group_cols)["order_demand"]
+        .agg(
+            weekly_net_demand="sum",
+            order_count="count",
+        )
+        .reset_index()
+    )
 
     has_returns = returns.groupby(group_cols).size().reset_index(name="return_count")
     has_returns["has_returns"] = True
@@ -135,17 +141,14 @@ def build_features(gold_path: Path = GOLD_PATH, output_path: Path = FEATURES_PAT
     for n in [1, 2, 3, 4, 52]:
         df[f"lag_{n}_week_demand"] = df.groupby(ENTITY_COLS)["weekly_order_demand"].shift(n)
 
-    df["rolling_4wk_avg_demand"] = (
-        df.groupby(ENTITY_COLS)["weekly_order_demand"]
-        .transform(lambda x: x.shift(1).rolling(4).mean())
+    df["rolling_4wk_avg_demand"] = df.groupby(ENTITY_COLS)["weekly_order_demand"].transform(
+        lambda x: x.shift(1).rolling(4).mean()
     )
-    df["rolling_4wk_std_demand"] = (
-        df.groupby(ENTITY_COLS)["weekly_order_demand"]
-        .transform(lambda x: x.shift(1).rolling(4).std())
+    df["rolling_4wk_std_demand"] = df.groupby(ENTITY_COLS)["weekly_order_demand"].transform(
+        lambda x: x.shift(1).rolling(4).std()
     )
-    df["rolling_8wk_avg_demand"] = (
-        df.groupby(ENTITY_COLS)["weekly_order_demand"]
-        .transform(lambda x: x.shift(1).rolling(8).mean())
+    df["rolling_8wk_avg_demand"] = df.groupby(ENTITY_COLS)["weekly_order_demand"].transform(
+        lambda x: x.shift(1).rolling(8).mean()
     )
     df["demand_momentum"] = df["lag_1_week_demand"] - df["rolling_4wk_avg_demand"]
     df["yoy_demand_change"] = df["lag_1_week_demand"] - df["lag_52_week_demand"]
@@ -163,16 +166,30 @@ def build_features(gold_path: Path = GOLD_PATH, output_path: Path = FEATURES_PAT
     df["is_peak_month"] = df["month"].isin([11, 12, 1]).astype(int)
 
     feature_cols = [
-        "warehouse", "product_code", "product_category", "week_start_date",
+        "warehouse",
+        "product_code",
+        "product_category",
+        "week_start_date",
         "weekly_order_demand",
-        "lag_1_week_demand", "lag_2_week_demand", "lag_3_week_demand",
-        "lag_4_week_demand", "lag_52_week_demand",
-        "rolling_4wk_avg_demand", "rolling_4wk_std_demand",
-        "rolling_8wk_avg_demand", "demand_momentum",
-        "yoy_demand_change", "yoy_demand_pct_change",
-        "year", "month", "quarter", "week_of_year",
-        "is_quarter_end_week", "is_peak_month",
-        "order_count", "has_returns",
+        "lag_1_week_demand",
+        "lag_2_week_demand",
+        "lag_3_week_demand",
+        "lag_4_week_demand",
+        "lag_52_week_demand",
+        "rolling_4wk_avg_demand",
+        "rolling_4wk_std_demand",
+        "rolling_8wk_avg_demand",
+        "demand_momentum",
+        "yoy_demand_change",
+        "yoy_demand_pct_change",
+        "year",
+        "month",
+        "quarter",
+        "week_of_year",
+        "is_quarter_end_week",
+        "is_peak_month",
+        "order_count",
+        "has_returns",
     ]
 
     df_features = df[feature_cols].copy()
@@ -189,7 +206,12 @@ def build_features(gold_path: Path = GOLD_PATH, output_path: Path = FEATURES_PAT
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     df_features.to_parquet(output_path, index=False)
-    logger.info("Features file written to %s with %d rows and %d columns", output_path, len(df_features), len(df_features.columns))
+    logger.info(
+        "Features file written to %s with %d rows and %d columns",
+        output_path,
+        len(df_features),
+        len(df_features.columns),
+    )
     return df_features
 
 

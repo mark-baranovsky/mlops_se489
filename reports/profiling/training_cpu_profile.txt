@@ -1,0 +1,48 @@
+         5532206 function calls (5406702 primitive calls) in 146.046 seconds
+
+   Ordered by: cumulative time
+   List reduced from 9654 to 40 due to restriction <40>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+      2/1    0.012    0.006  145.212  145.212 /Users/ayanahmed/Desktop/mlops_se489/scripts/profile_training.py:41(_run_training_for_profile)
+      2/1    0.005    0.003  145.200  145.200 /Users/ayanahmed/Desktop/mlops_se489/src/mlops_se489/models/train_model.py:301(run_training)
+    107/2    0.005    0.000  139.420   69.710 /Users/ayanahmed/Desktop/mlops_se489/.venv/lib/python3.12/site-packages/sklearn/base.py:1381(wrapper)
+        2    0.000    0.000  139.418   69.709 /Users/ayanahmed/Desktop/mlops_se489/.venv/lib/python3.12/site-packages/sklearn/pipeline.py:582(fit)
+      200   89.573    0.448   89.611    0.448 /Users/ayanahmed/Desktop/mlops_se489/.venv/lib/python3.12/site-packages/sklearn/tree/_classes.py:226(_fit)
+        1    0.001    0.001   81.369   81.369 /Users/ayanahmed/Desktop/mlops_se489/src/mlops_se489/models/train_model.py:177(train_gradient_boosting)
+        1    0.000    0.000   78.582   78.582 /Users/ayanahmed/Desktop/mlops_se489/.venv/lib/python3.12/site-packages/sklearn/ensemble/_gb.py:622(fit)
+        1    0.008    0.008   78.577   78.577 /Users/ayanahmed/Desktop/mlops_se489/.venv/lib/python3.12/site-packages/sklearn/ensemble/_gb.py:831(_fit_stages)
+      100    0.025    0.000   78.511    0.785 /Users/ayanahmed/Desktop/mlops_se489/.venv/lib/python3.12/site-packages/sklearn/ensemble/_gb.py:438(_fit_stage)
+        1    0.001    0.001   63.524   63.524 /Users/ayanahmed/Desktop/mlops_se489/src/mlops_se489/models/train_model.py:116(train_random_forest)
+        3    0.000    0.000   60.301   20.100 /Users/ayanahmed/Desktop/mlops_se489/.venv/lib/python3.12/site-packages/sklearn/utils/parallel.py:54(__call__)
+        3    0.000    0.000   60.301   20.100 /Users/ayanahmed/Desktop/mlops_se489/.venv/lib/python3.12/site-packages/joblib/parallel.py:1969(__call__)
+      306    0.001    0.000   60.301    0.197 /Users/ayanahmed/Desktop/mlops_se489/.venv/lib/python3.12/site-packages/joblib/parallel.py:1888(_get_sequential_output)
+        1    0.000    0.000   60.047   60.047 /Users/ayanahmed/Desktop/mlops_se489/.venv/lib/python3.12/site-packages/sklearn/ensemble/_forest.py:302(fit)
+      181    0.003    0.000   50.901    0.281 /Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/queue.py:154(get)
+  149/141    0.052    0.000   47.999    0.340 /Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/threading.py:323(wait)
+  810/699   50.600    0.062   47.778    0.068 {method 'acquire' of '_thread.lock' objects}
+      100    0.017    0.000   47.088    0.471 /Users/ayanahmed/Desktop/mlops_se489/.venv/lib/python3.12/site-packages/sklearn/tree/_classes.py:1373(fit)
+      300    0.013    0.000   43.003    0.143 /Users/ayanahmed/Desktop/mlops_se489/.venv/lib/python3.12/site-packages/sklearn/utils/parallel.py:140(__call__)
+      100    0.054    0.001   42.710    0.427 /Users/ayanahmed/Desktop/mlops_se489/.venv/lib/python3.12/site-packages/sklearn/ensemble/_forest.py:132(_parallel_build_trees)
+        2    0.000    0.000    4.875    2.438 /Users/ayanahmed/Desktop/mlops_se489/.venv/lib/python3.12/site-packages/mlflow/sklearn/__init__.py:379(log_model)
+        2    0.000    0.000    4.875    2.438 /Users/ayanahmed/Desktop/mlops_se489/.venv/lib/python3.12/site-packages/mlflow/models/model.py:1058(log)
+        2    0.000    0.000    4.788    2.394 /Users/ayanahmed/Desktop/mlops_se489/.venv/lib/python3.12/site-packages/mlflow/sklearn/__init__.py:175(save_model)
+        2    0.000    0.000    4.661    2.331 /Users/ayanahmed/Desktop/mlops_se489/.venv/lib/python3.12/site-packages/mlflow/utils/environment.py:410(infer_pip_requirements)
+        2    0.000    0.000    4.661    2.331 /Users/ayanahmed/Desktop/mlops_se489/.venv/lib/python3.12/site-packages/mlflow/utils/requirements_utils.py:482(_infer_requirements)
+    20144    0.046    0.000    4.066    0.000 {built-in method posix.stat}
+        2    0.000    0.000    3.937    1.969 /Users/ayanahmed/Desktop/mlops_se489/.venv/lib/python3.12/site-packages/mlflow/utils/requirements_utils.py:302(_capture_imported_modules)
+        6    0.000    0.000    3.936    0.656 /Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/subprocess.py:1165(communicate)
+       57    0.000    0.000    3.929    0.069 <frozen genericpath>:16(exists)
+        2    0.000    0.000    3.907    1.954 /Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/threading.py:1430(run)
+      6/4    0.000    0.000    3.907    0.977 /Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/threading.py:637(wait)
+        2    0.000    0.000    3.907    1.953 /Users/ayanahmed/Desktop/mlops_se489/.venv/lib/python3.12/site-packages/mlflow/utils/requirements_utils.py:245(_run_command)
+        5    0.001    0.000    1.053    0.211 /Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/subprocess.py:2062(_communicate)
+        7    0.000    0.000    1.051    0.150 /Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/selectors.py:402(select)
+        7    1.051    0.150    1.051    0.150 {method 'poll' of 'select.poll' objects}
+      8/6    0.001    0.000    0.871    0.145 /Users/ayanahmed/Desktop/mlops_se489/.venv/lib/python3.12/site-packages/sklearn/utils/_set_output.py:317(wrapped)
+        2    0.000    0.000    0.787    0.393 /Users/ayanahmed/Desktop/mlops_se489/.venv/lib/python3.12/site-packages/sklearn/pipeline.py:520(_fit)
+        2    0.000    0.000    0.786    0.393 /Users/ayanahmed/Desktop/mlops_se489/.venv/lib/python3.12/site-packages/joblib/memory.py:325(__call__)
+        2    0.000    0.000    0.786    0.393 /Users/ayanahmed/Desktop/mlops_se489/.venv/lib/python3.12/site-packages/sklearn/pipeline.py:1578(_fit_transform_one_with_callbacks)
+        2    0.000    0.000    0.786    0.393 /Users/ayanahmed/Desktop/mlops_se489/.venv/lib/python3.12/site-packages/sklearn/pipeline.py:1553(_fit_transform_one)
+
+

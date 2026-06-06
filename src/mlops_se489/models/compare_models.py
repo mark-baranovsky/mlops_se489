@@ -12,14 +12,12 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import mlflow
 import pandas as pd
-import ipdb
-ipdb.set_trace()
+from matplotlib.patches import Patch
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s — %(name)s — %(levelname)s — %(message)s",
-)
-logger = logging.getLogger(__name__)
+from mlops_se489.logging_config import get_logger, setup_logging
+
+setup_logging()
+logger = get_logger(__name__)
 
 BASE_DIR = Path(__file__).resolve().parents[3]
 REPORTS_DIR = BASE_DIR / "reports" / "figures"
@@ -29,14 +27,11 @@ EXPERIMENT_NAME = "demand_forecast_v1"
 def generate_comparison_chart(output_path: Path = REPORTS_DIR) -> str:
     """Generate a bar chart comparing all model runs by validation RMSE.
 
-    Fetches all runs from the MLflow experiment, extracts val_rmse metrics,
-    and creates a bar chart saved to reports/figures/ and logged to MLflow.
-
     Args:
-        output_path: Directory to save the chart image.
+        output_path: Directory where the chart image will be saved.
 
     Returns:
-        Path to the saved chart image.
+        String path to the saved chart image.
     """
     logger.info("Fetching runs from MLflow experiment: %s", EXPERIMENT_NAME)
 
@@ -45,7 +40,7 @@ def generate_comparison_chart(output_path: Path = REPORTS_DIR) -> str:
 
     experiment = client.get_experiment_by_name(EXPERIMENT_NAME)
     if experiment is None:
-        breakpoint() 
+        logger.error("Experiment '%s' not found. Run training first.", EXPERIMENT_NAME)
         raise ValueError(f"Experiment '{EXPERIMENT_NAME}' not found. Run training first.")
 
     runs = client.search_runs(
@@ -54,6 +49,7 @@ def generate_comparison_chart(output_path: Path = REPORTS_DIR) -> str:
     )
 
     if not runs:
+        logger.error("No runs found in experiment '%s'.", EXPERIMENT_NAME)
         raise ValueError("No runs found in experiment. Run training first.")
 
     data = []
@@ -61,22 +57,26 @@ def generate_comparison_chart(output_path: Path = REPORTS_DIR) -> str:
         name = run.data.tags.get("mlflow.runName", run.info.run_id[:8])
         val_rmse = run.data.metrics.get("val_rmse")
         is_champion = run.data.tags.get("is_champion", "false")
+
         if val_rmse is not None:
-            data.append({
-                "model": name,
-                "val_rmse": val_rmse,
-                "is_champion": is_champion == "true",
-            })
+            data.append(
+                {
+                    "model": name,
+                    "val_rmse": val_rmse,
+                    "is_champion": is_champion == "true",
+                }
+            )
 
     if not data:
-        breakpoint()  # Debugging: Check if runs have val_rmse metrics
+        logger.error("No val_rmse metrics found in MLflow runs.")
         raise ValueError("No val_rmse metrics found in runs.")
 
     df = pd.DataFrame(data).sort_values("val_rmse")
     logger.info("Found %d runs with val_rmse metrics", len(df))
 
     fig, ax = plt.subplots(figsize=(10, 6))
-    colors = ["#2ecc71" if champ else "#3498db" for champ in df["is_champion"]]
+
+    colors = ["#2ecc71" if champion else "#3498db" for champion in df["is_champion"]]
     bars = ax.barh(df["model"], df["val_rmse"], color=colors)
 
     for bar, val in zip(bars, df["val_rmse"]):
@@ -90,9 +90,14 @@ def generate_comparison_chart(output_path: Path = REPORTS_DIR) -> str:
 
     ax.set_xlabel("Validation RMSE (lower is better)", fontsize=12)
     ax.set_title("Model Comparison — Validation RMSE", fontsize=14, fontweight="bold")
-    ax.axvline(x=df["val_rmse"].min(), color="red", linestyle="--", alpha=0.3, label="Best RMSE")
+    ax.axvline(
+        x=df["val_rmse"].min(),
+        color="red",
+        linestyle="--",
+        alpha=0.3,
+        label="Best RMSE",
+    )
 
-    from matplotlib.patches import Patch
     legend_elements = [
         Patch(facecolor="#2ecc71", label="Champion"),
         Patch(facecolor="#3498db", label="Other models"),
@@ -110,7 +115,10 @@ def generate_comparison_chart(output_path: Path = REPORTS_DIR) -> str:
 
     with mlflow.start_run(run_name="model_comparison_chart"):
         mlflow.log_artifact(str(chart_path), artifact_path="charts")
-        mlflow.log_table(data=df.to_dict(orient="records"), artifact_file="model_comparison.json")
+        mlflow.log_table(
+            data=df.to_dict(orient="records"),
+            artifact_file="model_comparison.json",
+        )
         logger.info("Chart and comparison table logged to MLflow")
 
     return str(chart_path)

@@ -7,7 +7,6 @@ Bronze ingests raw CSV data as-is. Silver cleans and standardizes it.
 from __future__ import annotations
 
 import logging
-import os
 from datetime import datetime
 from pathlib import Path
 
@@ -88,20 +87,20 @@ def clean_silver(bronze_path: Path = BRONZE_PATH, output_path: Path = SILVER_PAT
     df = pd.read_parquet(bronze_path)
     logger.info("Loaded %d rows from Bronze", len(df))
 
-    df = df.rename(columns={
-        "Product_Code": "product_code",
-        "Warehouse": "warehouse",
-        "Product_Category": "product_category",
-        "Date": "order_date_raw",
-        "Order_Demand": "order_demand_raw",
-    })
+    df = df.rename(
+        columns={
+            "Product_Code": "product_code",
+            "Warehouse": "warehouse",
+            "Product_Category": "product_category",
+            "Date": "order_date_raw",
+            "Order_Demand": "order_demand_raw",
+        }
+    )
     df = df.drop(columns=["source_file", "ingestion_date", "ingestion_timestamp"], errors="ignore")
 
     df["order_demand_str"] = df["order_demand_raw"].str.strip()
     mask = df["order_demand_str"].str.startswith("(", na=False)
-    df.loc[mask, "order_demand_str"] = (
-        "-" + df.loc[mask, "order_demand_str"].str.replace(r"[()]", "", regex=True)
-    )
+    df.loc[mask, "order_demand_str"] = "-" + df.loc[mask, "order_demand_str"].str.replace(r"[()]", "", regex=True)
     df["order_demand"] = pd.to_numeric(df["order_demand_str"], errors="coerce")
     df["order_date"] = pd.to_datetime(df["order_date_raw"], errors="coerce")
 
@@ -119,11 +118,19 @@ def clean_silver(bronze_path: Path = BRONZE_PATH, output_path: Path = SILVER_PAT
     df["week_start_date"] = df["order_date"] - pd.to_timedelta(df["order_date"].dt.weekday, unit="d")
     df["week_start_date"] = df["week_start_date"].dt.normalize()
 
-    df_silver = df[[
-        "product_code", "warehouse", "product_category",
-        "order_date", "order_demand",
-        "year", "month", "week_of_year", "week_start_date",
-    ]].copy()
+    df_silver = df[
+        [
+            "product_code",
+            "warehouse",
+            "product_category",
+            "order_date",
+            "order_demand",
+            "year",
+            "month",
+            "week_of_year",
+            "week_start_date",
+        ]
+    ].copy()
     df_silver["silver_processed_at"] = datetime.utcnow().isoformat()
 
     for col in ["product_code", "warehouse", "order_date", "order_demand"]:
