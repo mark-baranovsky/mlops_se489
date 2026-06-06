@@ -6,7 +6,6 @@ forecasts for every active warehouse-product combination.
 
 from __future__ import annotations
 
-import logging
 from datetime import datetime, timedelta
 from pathlib import Path
 

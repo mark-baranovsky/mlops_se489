@@ -6,7 +6,6 @@ and logs it as an artifact to the active MLflow experiment.
 
 from __future__ import annotations
 
-import logging
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -79,7 +78,7 @@ def generate_comparison_chart(output_path: Path = REPORTS_DIR) -> str:
     colors = ["#2ecc71" if champion else "#3498db" for champion in df["is_champion"]]
     bars = ax.barh(df["model"], df["val_rmse"], color=colors)
 
-    for bar, val in zip(bars, df["val_rmse"]):
+    for bar, val in zip(bars, df["val_rmse"], strict=False):
         ax.text(
             bar.get_width() + 100,
             bar.get_y() + bar.get_height() / 2,

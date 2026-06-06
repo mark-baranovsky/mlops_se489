@@ -35,7 +35,7 @@ class Model(BaseModel):
         """
         self.config = config or {}
 
-    def fit(self, X: Any, y: Any) -> "Model":
+    def fit(self, X: Any, y: Any) -> Model:
         """Fit the model.
 
         Raises:
@@ -62,7 +62,7 @@ class Model(BaseModel):
         joblib.dump(self, path)
 
     @classmethod
-    def load(cls, path: str | Path) -> "Model":
+    def load(cls, path: str | Path) -> Model:
         """Load a saved Model object from disk.
 
         Args:
