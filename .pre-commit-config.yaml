@@ -1,21 +1,29 @@
 repos:
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.6.0
-    hooks:
-      - id: ruff
-        args: [--fix]
-      - id: ruff-format
-
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.11.0
-    hooks:
-      - id: mypy
-        additional_dependencies: []
-        args: [--ignore-missing-imports]
-
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.6.0
+    rev: v5.0.0
     hooks:
       - id: trailing-whitespace
+        files: ^(src|scripts|tests|\.github/workflows)/.*
       - id: end-of-file-fixer
+        files: ^(src|scripts|tests|\.github/workflows)/.*
       - id: check-yaml
+        files: ^\.github/workflows/.*\.ya?ml$
+      - id: check-added-large-files
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.6.9
+    hooks:
+      - id: ruff
+        args: ["--fix"]
+        files: ^(src|scripts|tests)/.*\.py$
+      - id: ruff-format
+        files: ^(src|scripts|tests)/.*\.py$
+
+  - repo: local
+    hooks:
+      - id: mypy
+        name: mypy
+        entry: python -m mypy src/mlops_se489 --ignore-missing-imports
+        language: system
+        pass_filenames: false
+        files: ^src/mlops_se489/

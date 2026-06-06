@@ -6,7 +6,6 @@ and Prophet, tracks all experiments with MLflow, and saves the champion model.
 
 from __future__ import annotations
 
-import logging
 from pathlib import Path
 
 import joblib
@@ -106,7 +105,6 @@ def train_baseline(df_train: pd.DataFrame, df_val: pd.DataFrame) -> tuple[float,
         if active_run is None:
             raise RuntimeError("MLflow active run was not found.")
         run_id = active_run.info.run_id
-        
 
     logger.info(
         "Baseline — train RMSE: %.1f | val RMSE: %.1f | val MAE: %.1f",
@@ -167,7 +165,6 @@ def train_random_forest(
         mlflow.sklearn.log_model(pipeline, "random_forest_model")
         mlflow.set_tag("is_champion", "false")
 
-        
         active_run = mlflow.active_run()
         if active_run is None:
             raise RuntimeError("MLflow active run was not found.")
@@ -332,9 +329,7 @@ def run_training(
 
     if not features_path.exists():
         logger.error("Features file not found: %s", features_path)
-        raise FileNotFoundError(
-            f"Features file not found: {features_path}. Run pipeline previous stage."
-        )
+        raise FileNotFoundError(f"Features file not found: {features_path}. Run pipeline previous stage.")
 
     df = pd.read_parquet(features_path)
     df["week_start_date"] = pd.to_datetime(df["week_start_date"])
