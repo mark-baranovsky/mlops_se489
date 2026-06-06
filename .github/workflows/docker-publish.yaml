@@ -2,13 +2,13 @@ name: Build and publish Docker image
 
 on:
   push:
-    branches: [Containerization]
+    branches: [main]
     paths:
       - "dockerfiles/Dockerfile"
       - "requirements.txt"
       - ".github/workflows/docker-publish.yaml"
   pull_request:
-    branches: [Containerization]
+    branches: [main]
 
 permissions:
   contents: read
