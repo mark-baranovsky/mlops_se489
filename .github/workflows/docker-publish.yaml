@@ -4,9 +4,8 @@ on:
   push:
     branches: [Containerization]
     paths:
-      - "Dockerfile"
+      - "dockerfiles/Dockerfile"
       - "requirements.txt"
-      - "app.py"
       - ".github/workflows/docker-publish.yaml"
   pull_request:
     branches: [Containerization]
@@ -44,7 +43,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./Dockerfile
+          file: ./dockerfiles/Dockerfile
           push: ${{ github.event_name == 'push' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
