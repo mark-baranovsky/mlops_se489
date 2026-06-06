@@ -1,15 +1,40 @@
 version: '3.8'
 
+x-common-config: &common
+  build:
+    context: .
+    dockerfile: dockerfiles/Dockerfile
+  entrypoint: ["python"]
+  volumes:
+    - ./data:/app/data
+    - ./models:/app/models
+  environment:
+    - PYTHONUNBUFFERED=1
+  ports:
+    - "8000:8000"
 services:
-  mlops_se489:
-    build:
-      context: .
-      dockerfile: dockerfiles/Dockerfile
-    container_name: mlops_se489_app
-    volumes:
-      - ./data:/app/data
-      - ./models:/app/models
-    environment:
-      - PYTHONUNBUFFERED=1
-    ports:
-      - "8000:8000"
+  make_dataset:
+    <<: *common
+    container_name: mlops_se489_app_make_dataset
+    command: ["-m", "mlops_se489.data.make_dataset"]
+  build_features:
+    <<: *common
+    container_name: mlops_se489_app_build_features
+    command: ["-m", "mlops_se489.features.build_features"]
+    depends_on:
+      make_dataset:
+        condition: service_completed_successfully
+  train_model:
+    <<: *common
+    container_name: mlops_se489_app_train_model
+    command: ["-m", "mlops_se489.models.train_model"]
+    depends_on:
+      build_features:
+        condition: service_completed_successfully
+  predict_model:
+    <<: *common
+    container_name: mlops_se489_app_predict_model
+    command: ["-m", "mlops_se489.models.predict_model"]
+    depends_on:
+      train_model:
+        condition: service_completed_successfully
