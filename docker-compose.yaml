@@ -1,6 +1,7 @@
 version: '3.8'
 
 x-common-config: &common
+  image: mbarano3/mlops-se489-retail:latest
   build:
     context: .
     dockerfile: dockerfiles/Dockerfile
