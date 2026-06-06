@@ -35,4 +35,4 @@ RUN pip install --user --no-deps -e .
 
 EXPOSE 8000
 
-ENTRYPOINT ["sh", "-u", "pipeline.sh"]
+ENTRYPOINT ["python", "-u", "src/mlops_se489/models/train_model.py"]
