@@ -15,6 +15,7 @@ import mlflow.sklearn
 import numpy as np
 import pandas as pd
 from prophet import Prophet
+from google.cloud import storage
 from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
 from sklearn.impute import SimpleImputer
 from sklearn.metrics import mean_absolute_error, mean_squared_error
@@ -395,6 +396,29 @@ def run_training(
 
     return str(champion_path)
 
+def upload_champion_to_gcs(local_pkl_path: str | Path = "/app/models/champion_model.pkl") -> None:
+    """Copies the trained champion model out of the container onto GCS."""
+    if os.getenv("CLOUD_ML_JOB_ID"):
+        bucket_name: str = "mlops489-retail-bucket"
+        destination_blob_name: str = "models/champion_model.pkl"
+
+        # Convert to string gracefully for os.path operations
+        path_str: str = str(local_pkl_path)
+
+        if os.path.exists(path_str):
+            logger.info("Vertex AI job complete. Uploading champion to GCS...")
+            try:
+                storage_client = storage.Client()
+                bucket = storage_client.bucket(bucket_name)
+                blob = bucket.blob(destination_blob_name)
+
+                blob.upload_from_filename(path_str)
+                logger.info("Successfully pushed champion artifact safely to GCS!")
+            except Exception as e:
+                logger.error("Failed to upload model artifact to GCS: %s", str(e))
+        else:
+            logger.error("Expected champion file at %s but it wasn't found.", path_str)
 
 if __name__ == "__main__":
     run_training()
+    upload_champion_to_gcs()
