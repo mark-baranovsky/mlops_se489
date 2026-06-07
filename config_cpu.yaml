@@ -5,6 +5,6 @@ workerPoolSpecs:
     replicaCount: 1
     containerSpec:
       imageUri: us-central1-docker.pkg.dev/mlops-se489-retail-498706/mlops-se489-retail-docker/digits-svc:v1
-      args:
-        - "--data-path"
-        - "gs://mlops489-retail-bucket/data/processed/gold_weekly_product_demand_features.parquet"
+      env:
+        - name: DATA_PATH
+          value: "gs://mlops489-retail-bucket/data/processed/gold_weekly_product_demand.parquet"
