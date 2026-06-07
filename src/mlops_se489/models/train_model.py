@@ -15,7 +15,6 @@ import mlflow.sklearn
 import numpy as np
 import pandas as pd
 from prophet import Prophet
-from google.cloud import storage
 from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
 from sklearn.impute import SimpleImputer
 from sklearn.metrics import mean_absolute_error, mean_squared_error
