@@ -6,9 +6,9 @@ and Prophet, tracks all experiments with MLflow, and saves the champion model.
 
 from __future__ import annotations
 
-import logging
 from pathlib import Path
 
+import os
 import joblib
 import mlflow
 import mlflow.sklearn
@@ -26,7 +26,14 @@ setup_logging()
 logger = get_logger(__name__)
 
 BASE_DIR = Path(__file__).resolve().parents[3]
-FEATURES_PATH = BASE_DIR / "data" / "processed" / "gold_weekly_product_demand_features.parquet"
+FEATURES_PATH: Path | str
+
+FEATURES_PATH_STR = os.getenv("DATA_PATH")
+if FEATURES_PATH_STR:
+    # If it's a cloud URI string, keep it as a string or use a Cloud Path library
+    FEATURES_PATH = FEATURES_PATH_STR  
+else:
+    FEATURES_PATH = BASE_DIR / "data" / "processed" / "gold_weekly_product_demand_features.parquet"
 MODELS_DIR = BASE_DIR / "models"
 SPLIT_DATE = "2016-10-01"
 EXPERIMENT_NAME = "demand_forecast_v1"
@@ -106,7 +113,6 @@ def train_baseline(df_train: pd.DataFrame, df_val: pd.DataFrame) -> tuple[float,
         if active_run is None:
             raise RuntimeError("MLflow active run was not found.")
         run_id = active_run.info.run_id
-        
 
     logger.info(
         "Baseline — train RMSE: %.1f | val RMSE: %.1f | val MAE: %.1f",
@@ -167,7 +173,6 @@ def train_random_forest(
         mlflow.sklearn.log_model(pipeline, "random_forest_model")
         mlflow.set_tag("is_champion", "false")
 
-        
         active_run = mlflow.active_run()
         if active_run is None:
             raise RuntimeError("MLflow active run was not found.")
@@ -313,7 +318,7 @@ def train_prophet(df_train: pd.DataFrame, df_val: pd.DataFrame) -> tuple[float, 
 
 
 def run_training(
-    features_path: Path = FEATURES_PATH,
+    features_path: Path | str = FEATURES_PATH,
     models_dir: Path = MODELS_DIR,
     split_date: str = SPLIT_DATE,
 ) -> str:
@@ -330,11 +335,9 @@ def run_training(
     logger.info("Starting model training pipeline")
     logger.info("Expected features file: %s", features_path)
 
-    if not features_path.exists():
+    if isinstance(features_path, Path) and not features_path.exists():
         logger.error("Features file not found: %s", features_path)
-        raise FileNotFoundError(
-            f"Features file not found: {features_path}. Run pipeline previous stage."
-        )
+        raise FileNotFoundError(f"Features file not found: {features_path}. Run pipeline previous stage.")
 
     df = pd.read_parquet(features_path)
     df["week_start_date"] = pd.to_datetime(df["week_start_date"])
