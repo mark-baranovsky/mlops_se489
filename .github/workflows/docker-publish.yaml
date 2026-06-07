@@ -3,12 +3,11 @@ name: Build and publish Docker image
 on:
   push:
     branches: [main]
-    paths:
-      - "dockerfiles/Dockerfile"
-      - "requirements.txt"
-      - ".github/workflows/docker-publish.yaml"
+    tags:
+      - "v*"
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: read

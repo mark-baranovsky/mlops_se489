@@ -70,21 +70,62 @@ GitHub Actions automatically runs automated tests, linting, formatting checks, t
 
 ## 2. Continuous Docker Building & CML
 
-- [ ] **Automated Docker Builds**: Configure Docker build pipeline triggered by:
-  - [ ] Commits to main branch
-  - [ ] Version tags
-  - [ ] Manual workflow dispatch
-- [ ] **Docker Push**: Implement push to container registry (Docker Hub, GitHub Container Registry, or GCP)
-- [ ] **CML Initialization**: Initialize CML in repository
-- [ ] **CML Workflow**: Create GitHub Actions workflow for CML that:
-  - [ ] Trains model on workflow runner
-  - [ ] Generates performance metrics
-  - [ ] Creates visualizations/plots
-  - [ ] Comments results on PR
-- [ ] **CML Metrics Output**: Document format and sample output of CML metrics
-- [ ] **CML Plots**: Generate sample plots and document in CML workflow
-- [ ] **Model Comparison**: Create CML output showing comparison of current vs. baseline model
-- [ ] **Workflow Documentation**: Document CML workflow setup and customization
+* [x] **Automated Docker Builds**: Configure Docker build pipeline triggered by:
+
+  * [x] Commits to main branch
+  * [x] Version tags
+  * [x] Manual workflow dispatch
+* [ ] **Docker Push**: Implement push to container registry (Docker Hub, GitHub Container Registry, or GCP)
+* [x] **CML Initialization**: Initialize CML in repository
+* [x] **CML Workflow**: Create GitHub Actions workflow for CML that:
+
+  * [ ] Trains model on workflow runner
+  * [x] Generates performance metrics
+  * [ ] Creates visualizations/plots
+  * [x] Comments results on PR
+* [x] **CML Metrics Output**: Document format and sample output of CML metrics
+* [ ] **CML Plots**: Generate sample plots and document in CML workflow
+* [x] **Model Comparison**: Create CML output showing comparison of current vs. baseline model
+* [x] **Workflow Documentation**: Document CML workflow setup and customization
+### 2.1 Automated Docker Builds
+
+- **Status:** Completed
+- **Repo evidence:**
+  - `.github/workflows/docker-publish.yaml`
+  - `dockerfiles/Dockerfile`
+- **Screenshot evidence:**
+  - `reports/figures/screenshots/docker_workflow_triggers.png`
+  - `reports/figures/screenshots/docker_workflow_green.png`
+
+The Docker workflow builds the project image using the existing multi-stage Dockerfile from Phase 2. It is configured to run on pushes to `main`, version tags, pull requests to `main`, and manual workflow dispatch. This verifies that the container can be built automatically as part of the CI/CD pipeline.
+
+### 2.2 Continuous Machine Learning (CML)
+
+* **Status:** Completed
+* **Repo evidence:**
+
+  * `.github/workflows/cml.yml`
+  * `reports/cml_report.md`
+  * `scripts/profile_training.py`
+  * `reports/profiling/training_cpu_profile.txt`
+  * `reports/profiling/training_memory_usage.txt`
+* **Screenshot evidence:** `reports/figures/screenshots/cml_pr_comment.png`
+
+The CML workflow posts a model training report to pull requests so reviewers can inspect model performance before merging. The report includes validation RMSE and MAE values for the baseline model, Random Forest, Gradient Boosting, and Prophet demo model, along with the selected champion model. Profiling was cleaned up into a standalone script at `scripts/profile_training.py`, and the generated CPU and memory profiling outputs are saved under `reports/profiling/`.
+
+### CML Report Metrics Summary
+
+The CML report includes the following model results:
+
+| Model              | Validation RMSE | Validation MAE |
+| ------------------ | --------------: | -------------: |
+| Baseline           |        50,753.3 |        9,277.3 |
+| Random Forest      |        42,479.0 |        8,577.7 |
+| Gradient Boosting  |        42,875.5 |        8,105.6 |
+| Prophet demo model |           515.8 |          326.1 |
+
+The selected champion model is **Random Forest** with validation RMSE **42,479.0**.
+
 
 ---
 
