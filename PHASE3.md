@@ -27,6 +27,32 @@ Phase 3 implements continuous integration/continuous deployment (CI/CD) pipeline
   - [x] Type checking
   - [x] Trailing whitespace
 - [x] **Test Documentation**: Document how to run tests locally and in CI
+### 1.1 Unit Testing with pytest
+
+- **Status:** Completed
+- **Repo evidence:** `tests/`
+- **Screenshot evidence:** `reports/figures/screenshots/local_pytest_coverage.png`
+
+Pytest tests were verified for data processing, feature engineering, model, training, prediction, evaluation, and utility components. The test command runs with coverage reporting so the team can see which modules are covered and where future test improvements are needed.
+
+### 1.2 GitHub Actions CI Workflow
+
+- **Status:** Completed
+- **Repo evidence:**
+  - `.github/workflows/tests.yml`
+  - `.github/workflows/code-quality.yml`
+  - `.github/workflows/ci.yml`
+- **Screenshot evidence:** `reports/figures/screenshots/github_actions_green.png`, `reports/figures/screenshots/local_ruff_mypy_passed.png`
+
+GitHub Actions workflows were added for automated testing and code quality checks. The workflows run pytest, Ruff linting, Ruff formatting checks, and mypy type checking on pull requests and pushes. The legacy CI workflow was also fixed so it checks production code, scripts, and tests instead of failing on notebook files.
+
+### 1.3 Pre-commit Hooks
+
+- **Status:** Completed
+- **Repo evidence:** `.pre-commit-config.yaml`
+- **Screenshot evidence:** `reports/figures/screenshots/precommit_passed.png`
+
+
 ### Local CI/Test Commands
 
 To run the same checks locally before opening a pull request:
@@ -37,6 +63,9 @@ python3 -m ruff check src scripts tests
 python3 -m ruff format --check src scripts tests
 python3 -m mypy src/mlops_se489 --ignore-missing-imports
 pre-commit run --all-files
+```
+
+GitHub Actions automatically runs automated tests, linting, formatting checks, type checks, and pre-commit-style validation on pull requests and pushes. The workflows test Python 3.11 and Python 3.12.
 ---
 
 ## 2. Continuous Docker Building & CML
