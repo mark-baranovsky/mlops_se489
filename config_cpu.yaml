@@ -7,4 +7,4 @@ workerPoolSpecs:
       imageUri: us-central1-docker.pkg.dev/mlops-se489-retail-498706/mlops-se489-retail-docker/digits-svc:v1
       env:
         - name: DATA_PATH
-          value: "gs://mlops489-retail-bucket/data/processed/gold_weekly_product_demand.parquet"
+          value: "gs://mlops489-retail-bucket/data/processed/gold_weekly_product_demand_features.parquet"
