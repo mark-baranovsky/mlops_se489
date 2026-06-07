@@ -26,7 +26,7 @@ Phase 3 implements continuous integration/continuous deployment (CI/CD) pipeline
   - [x] Linting
   - [x] Type checking
   - [x] Trailing whitespace
-- [ ] **Test Documentation**: Document how to run tests locally and in CI
+- [x] **Test Documentation**: Document how to run tests locally and in CI
 ### Local CI/Test Commands
 
 To run the same checks locally before opening a pull request:
