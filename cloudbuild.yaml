@@ -12,6 +12,8 @@ steps:
       - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_IMAGE}:${_TAG}'
       - '-t'
       - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_IMAGE}:${SHORT_SHA}'
+      - '-f'
+      - 'dockerfiles/Dockerfile'
       - '.'
   - name: 'gcr.io/cloud-builders/docker'
     args:
