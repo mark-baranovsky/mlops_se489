@@ -1,0 +1,10 @@
+# config_cpu.yaml
+workerPoolSpecs:
+  - machineSpec:
+      machineType: n1-standard-4
+    replicaCount: 1
+    containerSpec:
+      imageUri: us-central1-docker.pkg.dev/mlops-se489-retail-498706/mlops-se489-retail-docker/digits-svc:v1
+      args:
+        - "--data-path"
+        - "gs://mlops489-retail-bucket/data/processed/gold_weekly_product_demand_features.parquet"
