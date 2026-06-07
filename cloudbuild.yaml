@@ -6,12 +6,16 @@ substitutions:
 
 steps:
   - name: 'gcr.io/cloud-builders/docker'
+    env:
+      - 'DOCKER_BUILDKIT=1'
     args:
       - 'build'
       - '-t'
       - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_IMAGE}:${_TAG}'
       - '-t'
       - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/${_IMAGE}:${SHORT_SHA}'
+      - '-f'
+      - 'dockerfiles/Dockerfile'
       - '.'
   - name: 'gcr.io/cloud-builders/docker'
     args:
