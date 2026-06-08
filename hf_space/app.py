@@ -5,7 +5,10 @@ import requests
 import streamlit as st
 
 
-API_URL = os.getenv("API_URL")
+API_URL = os.getenv(
+    "API_URL",
+    "https://retail-demand-api-699949078927.us-central1.run.app/predict",
+)
 
 FEATURE_COLS = [
     "lag_1_week_demand",
@@ -28,6 +31,12 @@ FEATURE_COLS = [
     "order_count",
 ]
 
+
+st.set_page_config(
+    page_title="Retail Demand Forecasting",
+    page_icon="📦",
+    layout="wide",
+)
 
 st.title("📦 Retail Demand Forecasting")
 
@@ -83,8 +92,20 @@ if st.button("Predict Weekly Demand"):
         st.error("Missing API_URL. Add it in Hugging Face Space settings.")
         st.stop()
 
-    response = requests.post(API_URL, json=inputs, timeout=30)
-    response.raise_for_status()
+    try:
+        response = requests.post(API_URL, json=inputs, timeout=30)
+        response.raise_for_status()
 
-    prediction = response.json()["prediction"]
-    st.success(f"Predicted weekly order demand: {prediction:,.2f}")
+        result = response.json()
+        prediction = result["prediction"]
+
+        st.success(f"Predicted weekly order demand: {prediction:,.2f}")
+
+    except requests.exceptions.RequestException as error:
+        st.error("Could not connect to the FastAPI prediction service.")
+        st.code(str(error))
+
+    except KeyError:
+        st.error("The API response did not include a `prediction` field.")
+        st.write("API response:")
+        st.json(response.json())
