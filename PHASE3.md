@@ -70,12 +70,49 @@ GitHub Actions automatically runs automated tests, linting, formatting checks, t
 
 ## 2. Continuous Docker Building & CML
 
-* [x] **Automated Docker Builds**: Configure Docker build pipeline triggered by:
+- [x] **Automated Docker Builds**: Configure Docker build pipeline triggered by:
+  - [x] Commits to main branch
+  - [x] Version tags
+  - [x] Manual workflow dispatch
+- [x] **Docker Push**: Implement push to container registry (Docker Hub, GitHub Container Registry, or GCP)
 
-  * [x] Commits to main branch
-  * [x] Version tags
-  * [x] Manual workflow dispatch
-* [ ] **Docker Push**: Implement push to container registry (Docker Hub, GitHub Container Registry, or GCP)
+The workflow yaml can be found at .github\workflows\docker-publish.yaml
+
+You first need to creata PAT in Docker Hub by clicking on your avatar -> account settings -> Personal Access Tokens -> Generate New Token. Copy the token right away.
+
+Now navigate to the github repository -> Settings -> Secrets and Variables -> Actions -> New Repository Secret.
+The three secrets you needs are:
+DOCKER_HUB_TOKEN = PAT token you copied
+DOCKER_HUB_USERNAME = your dockerhub username
+DOCKER_HUB_REPOSITORY = your dockerhub repository name
+
+the docker publish yaml triggers on pushes and pulls from main and automagically builds the image and commits them to dockerhub.
+
+In order to get the docker image locally run this command:
+docker pull <your-username>/<your-repo>:latest
+
+Make sure you mount the volumes so the image can use the dataset and save the models.
+You can also changing entrypoint with --entrypoint python and run whatever script you want (eg.) -u -m mlops_se489.data.make_dataset
+
+docker run --rm -it `
+  --entrypoint python `
+  -v ${PWD}/data:/app/data `
+  -v ${PWD}/models:/app/models `
+  mlops_se489 `
+  -u -m mlops_se489.data.make_dataset
+
+# 1. Pull the image
+docker pull your-dockerhub-username/mlops_se489:latest
+
+# 2. Tag it so Compose recognizes it as the local image
+docker tag your-dockerhub-username/mlops_se489:latest mlops_se489:latest
+
+# 3. Run your pipeline
+docker compose up
+
+![alt text](reports/figures/screenshots/image.png)
+![alt text](reports/figures/screenshots/gcp-artifact-registry-1.png)
+![alt text](reports/figures/screenshots/gcp-artifact-registry-2.png)
 * [x] **CML Initialization**: Initialize CML in repository
 * [x] **CML Workflow**: Create GitHub Actions workflow for CML that:
 
@@ -129,73 +166,169 @@ The selected champion model is **Random Forest** with validation RMSE **42,479.0
 
 ---
 
+---
+
 ## 3. Deployment on GCP
 
-- [ ] **GCP Project Setup**: Create GCP project and enable necessary APIs
-- [ ] **Service Account**: Create service account with appropriate permissions for:
-  - [ ] Artifact Registry
-  - [ ] Vertex AI
-  - [ ] Cloud Run
-  - [ ] Cloud Functions
-  - [ ] Compute Engine
-- [ ] **Artifact Registry**: Set up Artifact Registry for storing Docker images
-  - [ ] Create repository in Artifact Registry
-  - [ ] Configure authentication from CI/CD
-  - [ ] Push Docker images to registry
-- [ ] **Vertex AI Training (Option A)**: Set up custom training on Vertex AI
-  - [ ] Create training container image
-  - [ ] Configure training job specification
-  - [ ] Document how to submit training jobs
+- [x] **GCP Project Setup**: Create GCP project and enable necessary APIs
+- [x] **Service Account**: Create service account with appropriate permissions for:
+  - [x] Artifact Registry
+  - [x] Vertex AI
+  - [x] Cloud Run
+  - [x] Cloud Functions
+  - [x] Compute Engine
+
+  Before you can create an artifact registry, you must enable the gcloud services:
+  gcloud services enable artifactregistry.googleapis.com
+  gcloud services enable cloudbuild.googleapis.com
+
+- [x] **Artifact Registry**: Set up Artifact Registry for storing Docker images
+  - [x] Create repository in Artifact Registry
+  - [x] Configure authentication from CI/CD
+  - [x] Push Docker images to registry
+
+  To create an artifact registry:
+  gcloud artifacts repositories create <repo-name> \
+    --repository-format=docker \
+    --location=us-central1 \
+    --description="MLOps 489 Docker registry"
+
+  To pull the repo, it exists here:
+  <region>-docker.pkg.dev/<project-id>/<repo-name>
+
+  The cloudbuild.yaml allows for the docker images to be built and pushed automatically
+
+  To wire the trigger:
+  Cloud Build -> Triggers -> Create Trigger
+      Region: same as your connection.
+
+    Source: 2nd gen.
+
+    Repository: pick the linked repo from step 3.
+
+    Event: Push to a branch.
+
+    Branch: ^main$.
+
+    Configuration: Cloud Build configuration file.
+
+    Location: Exercises/GCPArtifactRegistry/cloudbuild.yaml.
+
+    Under Substitution variables, add _REGION=us-central1, _REPO=<your-repo-name>, _IMAGE=digits-svc, _TAG=v1.
+
+    Click Create.
+
+  You can see your build in action in the Console -> Cloud Build -> History
+  ![alt text](image.png)
+
+  Verify that the image exists in the artifact registry:
+  gcloud artifacts docker images list \
+    us-central1-docker.pkg.dev/$(gcloud config get-value project)/mlops489-docker \
+    --include-tags
+
+  ![alt text](reports/figures/screenshots/gcp-artifact-registry-1.png)
+  ![alt text](reports/figures/screenshots/gcp-artifact-registry-2.png)
+
+  To pull the built image to your local machine:
+  docker pull us-central1-docker.pkg.dev/<project-id>/mlops489-docker/digits-svc:v1
+
+  Confirm it runs with:
+  docker run --rm us-central1-docker.pkg.dev/<project-id>/mlops489-docker/digits-svc:v1
+
+- [x] **Vertex AI Training (Option A)**: Set up custom training on Vertex AI
+  - [x] Create training container image
+  - [x] Configure training job specification
+  - [x] Document how to submit training jobs
+  ![alt text](reports/figures/screenshots/gcp-job-model-bucket-landing.png)
+
+First setup a bucket to store your data and trained model.
+Navigate to GCP Console homepage -> Cloud Storage -> Create
+Set a name for your bucket, location should be us-central1, storage class standard, access control uniform
+
+Verify the bucket exists
+gcloud storage ls
+
+push your data to the bucket using the google cloud site interface
+
+You can submit a job with the following command:
+gcloud ai custom-jobs create \
+    --region=us-central1 \
+    --display-name=mlops489-train \
+    --config=config_cpu.yaml \
+    --service-account=trainer-sa@<project-id>.iam.gserviceaccount.com
+
+To Watch the job, you stream the jogs directly to your terminal, and you can also check the logs directly on the google cloud
+
+gcloud ai custom-jobs stream-logs <job-id> --region=us-central1
+
+Once the job is finished, it should show up as green as shown in the following screenshots. The trained model is stored in the cloud storage bucket
+  ![alt text](reports/figures/screenshots/gcp-training-job-done-1.png)
+  ![alt text](reports/figures/screenshots/gcp-training-job-done-2.png)
+
+Cleaning up all jobs with the following commands:
+
+Find any running jobs
+gcloud ai custom-jobs list --region=us-central1 \
+    --filter="state:JOB_STATE_RUNNING OR state:JOB_STATE_PENDING"
+
+Cancel the running job
+gcloud ai custom-jobs cancel <job-id> --region=us-central1
+
+Delete all instances
+gcloud compute instances list
+gcloud compute instances delete mlops489-train --zone=us-central1-a --quiet
+
 - [ ] **Compute Engine Training (Option B)**: Set up training on Compute Engine instance
   - [ ] Create VM instance with GPU if needed
   - [ ] Document SSH access and training process
   - [ ] Set up instance for automated training
-- [ ] **Model Registry**: Store trained models in GCS bucket with versioning
-  - [ ] Create GCS bucket for models
-  - [ ] Implement model upload from training
-  - [ ] Document model retrieval process
-- [ ] **FastAPI Service**: Create FastAPI application for model serving
-  - [ ] Define inference endpoint(s)
-  - [ ] Implement request validation
-  - [ ] Add health check endpoint
-  - [ ] Document API specification
-- [ ] **Cloud Functions Deployment (Option A)**: Deploy inference as Cloud Function
-  - [ ] Package model and FastAPI app for Cloud Functions
-  - [ ] Create Cloud Function with appropriate memory/timeout
-  - [ ] Configure HTTP trigger
-  - [ ] Document invocation and response format
+- [x] **Model Registry**: Store trained models in GCS bucket with versioning
+  - [x] Create GCS bucket for models
+  - [x] Implement model upload from training
+  - [x] Document model retrieval process
+  ![alt text](gcp-training-job-done-3.png)
+- [x] **FastAPI Service**: Create FastAPI application for model serving
+  - [x] Define inference endpoint(s)
+  - [x] Implement request validation
+  - [x] Add health check endpoint
+  - [x] Document API specification
+- [x] **Cloud Functions Deployment (Option A)**: Deploy inference as Cloud Function
+  - [x] Package model and FastAPI app for Cloud Functions
+  - [x] Create Cloud Function with appropriate memory/timeout
+  - [x] Configure HTTP trigger
+  - [x] Document invocation and response format
 - [ ] **Cloud Run Deployment (Option B)**: Deploy as containerized service on Cloud Run
   - [ ] Create Dockerfile optimized for Cloud Run
   - [ ] Test locally with Cloud Run emulator
   - [ ] Deploy to Cloud Run with auto-scaling
   - [ ] Document deployment process
-- [ ] **Streamlit/Gradio Deployment (Option C)**: Deploy demo app on HuggingFace Spaces
-  - [ ] Create Streamlit or Gradio interface for model
-  - [ ] Push to GitHub repository
-  - [ ] Deploy to HuggingFace Spaces
-  - [ ] Document feature walkthrough
-- [ ] **Load Testing**: Test deployment with load testing tool (locust, Apache JMeter)
-  - [ ] Establish baseline performance metrics
-  - [ ] Document scaling characteristics
-- [ ] **Monitoring Setup**: Configure Cloud Monitoring and Cloud Logging
-  - [ ] Set up log aggregation
-  - [ ] Create monitoring dashboards
-  - [ ] Set up alerts for anomalies
+- [x] **Streamlit/Gradio Deployment (Option C)**: Deploy demo app on HuggingFace Spaces
+  - [x] Create Streamlit or Gradio interface for model
+  - [x] Push to GitHub repository
+  - [x] Deploy to HuggingFace Spaces
+  - [x] Document feature walkthrough
+- [x] **Load Testing**: Test deployment with load testing tool (locust, Apache JMeter)
+  - [x] Establish baseline performance metrics
+  - [x] Document scaling characteristics
+- [x] **Monitoring Setup**: Configure Cloud Monitoring and Cloud Logging
+  - [x] Set up log aggregation
+  - [x] Create monitoring dashboards
+  - [x] Set up alerts for anomalies
 
 ---
 
 ## 4. Documentation & Repository Updates
 
-- [ ] **Comprehensive README**: Update README with:
-  - [ ] Architecture diagram showing all components
-  - [ ] CI/CD pipeline overview
-  - [ ] Deployment instructions for each option (Cloud Run, Cloud Functions, HuggingFace)
-  - [ ] GCP setup and configuration guide
-  - [ ] How to invoke deployed models
-  - [ ] Monitoring and troubleshooting guide
-  - [ ] Cost estimation and optimization tips
-- [ ] **Deployment Guide**: Create detailed DEPLOYMENT.md with:
-  - [ ] Step-by-step GCP setup instructions
+- [x] **Comprehensive README**: Update README with:
+  - [x] Architecture diagram showing all components
+  - [x] CI/CD pipeline overview
+  - [x] Deployment instructions for each option (Cloud Run, Cloud Functions, HuggingFace)
+  - [x] GCP setup and configuration guide
+  - [x] How to invoke deployed models
+  - [x] Monitoring and troubleshooting guide
+  - [x] Cost estimation and optimization tips
+- [x] **Deployment Guide**: Create detailed DEPLOYMENT.md with:
+  - [x] Step-by-step GCP setup instructions
   - [ ] Cloud Run deployment procedure
   - [ ] Cloud Functions configuration
   - [ ] Environment variables and secrets management
