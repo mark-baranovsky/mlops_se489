@@ -3,7 +3,7 @@ from pathlib import Path
 import joblib
 import pandas as pd
 import streamlit as st
-
+import requests
 
 BASE_DIR = Path(__file__).resolve().parent
 MODEL_PATH = BASE_DIR / "models" / "champion_model.pkl"
