@@ -1,15 +1,11 @@
 import os
-
 import requests
 import streamlit as st
 
-
 API_URL = os.getenv("API_URL", "http://localhost:8888/predict")
-
 
 st.set_page_config(
     page_title="Product Demand Predictor",
-    page_icon="📦",
     layout="centered",
 )
 
