@@ -33,19 +33,15 @@ jobs:
           pip install -r requirements.txt
           pip install -r requirements_dev.txt
 
-      - name: Run data pipeline
-        run: |
-          python notebooks/00_setup.py
-          python notebooks/01_bronze_ingestion_product_demand.py
-          python notebooks/02_silver_cleaning_product_demand.py
-          python notebooks/03_gold_weekly_aggregation_product_demand.py
-          python notebooks/04_gold_feature_engineering_product_demand.py
-
       - name: Train model
+        env:
+          FEATURES_PATH: data/processed/cml_sample_features.parquet
         run: |
           python notebooks/05_model_training_product_demand.py
 
       - name: Generate CML report and plots
+        env:
+          FEATURES_PATH: data/processed/cml_sample_features.parquet
         run: |
           python scripts/cml_train.py
 
