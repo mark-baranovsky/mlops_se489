@@ -33,8 +33,9 @@ COPY . .
 # Install the package itself without reinstalling dependencies
 RUN pip install --user --no-deps -e .
 
+ENV PORT=8080
 EXPOSE 8080
 
-CMD ["sh", "-c", "uvicorn mlops_se489.api.fastapi:app --host 0.0.0.0 --port ${PORT:-8080}"]
+CMD exec uvicorn mlops_se489.api.main:app --host 0.0.0.0 --port $PORT --workers 1
 
 ENTRYPOINT ["python", "-u", "src/mlops_se489/models/train_model.py"]
