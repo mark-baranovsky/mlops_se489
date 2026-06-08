@@ -276,7 +276,7 @@ def write_cml_report(champion_eval_metrics, plot_paths, peak_memory, mlflow_metr
             val_rmse_text = f"{val_rmse:,.1f}"
             val_mae_text = f"{val_mae:,.1f}"
 
-            report += f"| {row['model']} | " f"{train_rmse_text} | " f"{val_rmse_text} | " f"{val_mae_text} |\n "
+            report += f"| {row['model']} | {train_rmse_text} | {val_rmse_text} | {val_mae_text} |\n "
 
         report += "\n"
     else:
