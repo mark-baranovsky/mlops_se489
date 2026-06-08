@@ -88,5 +88,4 @@ if st.button("Predict Demand"):
 
     except requests.exceptions.RequestException as e:
         st.error("Could not connect to the prediction API.")
-        st.write("Make sure your FastAPI app or Cloud Function is running.")
         st.exception(e)
