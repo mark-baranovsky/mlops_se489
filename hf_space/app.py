@@ -5,7 +5,7 @@ import requests
 import streamlit as st
 
 
-API_URL = "https://retail-demand-api-699949078927.us-central1.run.app"
+API_URL = "https://retail-demand-api-699949078927.us-central1.run.app/predict"
 
 HEALTH_URL = os.getenv(
     "HEALTH_URL",
