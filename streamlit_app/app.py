@@ -4,7 +4,13 @@ import pandas as pd
 import requests
 import streamlit as st
 
+
 API_URL = "https://retail-demand-api-699949078927.us-central1.run.app"
+
+HEALTH_URL = os.getenv(
+    "HEALTH_URL",
+    "https://retail-demand-api-699949078927.us-central1.run.app/health",
+)
 
 FEATURE_COLS = [
     "lag_1_week_demand",
@@ -105,3 +111,17 @@ if st.button("Predict Weekly Demand"):
         st.error("The API response did not include a `prediction` field.")
         st.write("API response:")
         st.json(response.json())
+
+st.subheader("API Health Check")
+
+if st.button("Check API Health"):
+    try:
+        health_response = requests.get(HEALTH_URL, timeout=10)
+        health_response.raise_for_status()
+
+        st.success("FastAPI service is healthy.")
+        st.json(health_response.json())
+
+    except requests.exceptions.RequestException as error:
+        st.error("FastAPI health check failed.")
+        st.code(str(error))
