@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - dev
+      - documentation_p3
   workflow_dispatch:
 
 permissions:
