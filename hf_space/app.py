@@ -99,7 +99,7 @@ if st.button("Predict Weekly Demand"):
         response.raise_for_status()
 
         result = response.json()
-        prediction = result["prediction"]
+        prediction = result["predicted_weekly_demand"]
 
         st.success(f"Predicted weekly order demand: {prediction:,.2f}")
 
