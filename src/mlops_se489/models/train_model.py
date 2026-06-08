@@ -388,13 +388,20 @@ def run_training(
         # If running on Vertex AI, save directly to your persistent bucket URI string
         champion_path = "gs://mlops489-retail-bucket/models/champion_model.pkl"
         logger.info("Vertex AI detected. Saving champion model directly to GCS...")
+
+        import gcsfs
+        fs = gcsfs.GCSFileSystem()
+        with fs.open(champion_path, "wb") as f:
+            joblib.dump(champion_model, f)
     else:
         # Fallback for local testing on your workstation
         models_dir.mkdir(parents=True, exist_ok=True)
         champion_path = str(models_dir / "champion_model.pkl")
         logger.info("Local environment detected. Saving champion locally...")
 
-    joblib.dump(champion_model, champion_path)
+        with open(champion_path, "wb") as f:
+            joblib.dump(champion_model, champion_path)
+
     logger.info("Champion model saved to %s", champion_path)
 
     client = mlflow.tracking.MlflowClient()
