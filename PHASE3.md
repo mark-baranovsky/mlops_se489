@@ -7,127 +7,31 @@ Phase 3 implements continuous integration/continuous deployment (CI/CD) pipeline
 
 ## 1. Continuous Integration & Testing
 
-- [x] **Unit Tests**: Write pytest test scripts for data processing and model components
-- [x] **Integration Tests**: Create integration tests for full training pipeline
+- [ ] **Unit Tests**: Write pytest test scripts for data processing and model components
+- [ ] **Integration Tests**: Create integration tests for full training pipeline
 - [ ] **Test Coverage**: Aim for >80% code coverage with pytest-cov
-- [x] **GitHub Actions - Tests**: Create workflow for running tests on every push
-  - [x] Trigger on: push to main/develop branches and PRs
-  - [x] Test across multiple Python versions if applicable
-  - [x] Report coverage metrics
-- [x] **GitHub Actions - Code Quality**: Create workflow for:
-  - [x] Running ruff linter
-  - [x] Type checking with mypy
-  - [x] Formatting checks
-- [x] **GitHub Actions - Docker Build**: Create workflow for building Docker image
-  - [x] Build on PR and main branch push
-  - [x] Test built image
-- [x] **Pre-commit Hooks**: Set up pre-commit hooks for:
-  - [x] Formatting (black/ruff)
-  - [x] Linting
-  - [x] Type checking
-  - [x] Trailing whitespace
-- [x] **Test Documentation**: Document how to run tests locally and in CI
-### 1.1 Unit Testing with pytest
+- [ ] **GitHub Actions - Tests**: Create workflow for running tests on every push
+  - [ ] Trigger on: push to main/develop branches and PRs
+  - [ ] Test across multiple Python versions if applicable
+  - [ ] Report coverage metrics
+- [ ] **GitHub Actions - Code Quality**: Create workflow for:
+  - [ ] Running ruff linter
+  - [ ] Type checking with mypy
+  - [ ] Formatting checks
+- [ ] **GitHub Actions - Docker Build**: Create workflow for building Docker image
+  - [ ] Build on PR and main branch push
+  - [ ] Test built image
+- [ ] **Pre-commit Hooks**: Set up pre-commit hooks for:
+  - [ ] Formatting (black/ruff)
+  - [ ] Linting
+  - [ ] Type checking
+  - [ ] Trailing whitespace
+- [ ] **Test Documentation**: Document how to run tests locally and in CI
 
-- **Status:** Completed
-- **Repo evidence:** `tests/`
-- **Screenshot evidence:** `reports/figures/screenshots/local_pytest_coverage.png`
-
-Pytest tests were verified for data processing, feature engineering, model, training, prediction, evaluation, and utility components. The test command runs with coverage reporting so the team can see which modules are covered and where future test improvements are needed.
-
-### 1.2 GitHub Actions CI Workflow
-
-- **Status:** Completed
-- **Repo evidence:**
-  - `.github/workflows/tests.yml`
-  - `.github/workflows/code-quality.yml`
-  - `.github/workflows/ci.yml`
-- **Screenshot evidence:** `reports/figures/screenshots/github_actions_green.png`, `reports/figures/screenshots/local_ruff_mypy_passed.png`
-
-GitHub Actions workflows were added for automated testing and code quality checks. The workflows run pytest, Ruff linting, Ruff formatting checks, and mypy type checking on pull requests and pushes. The legacy CI workflow was also fixed so it checks production code, scripts, and tests instead of failing on notebook files.
-
-### 1.3 Pre-commit Hooks
-
-- **Status:** Completed
-- **Repo evidence:** `.pre-commit-config.yaml`
-- **Screenshot evidence:** `reports/figures/screenshots/precommit_passed.png`
-
-
-### Local CI/Test Commands
-
-To run the same checks locally before opening a pull request:
-
-```bash
-python3 -m pytest tests/ -v --cov=src --cov-report=term-missing
-python3 -m ruff check src scripts tests
-python3 -m ruff format --check src scripts tests
-python3 -m mypy src/mlops_se489 --ignore-missing-imports
-pre-commit run --all-files
-```
-
-GitHub Actions automatically runs automated tests, linting, formatting checks, type checks, and pre-commit-style validation on pull requests and pushes. The workflows test Python 3.11 and Python 3.12.
 ---
 
 ## 2. Continuous Docker Building & CML
 
-<<<<<<< Updated upstream
-* [x] **Automated Docker Builds**: Configure Docker build pipeline triggered by:
-
-  * [x] Commits to main branch
-  * [x] Version tags
-  * [x] Manual workflow dispatch
-* [ ] **Docker Push**: Implement push to container registry (Docker Hub, GitHub Container Registry, or GCP)
-* [x] **CML Initialization**: Initialize CML in repository
-* [x] **CML Workflow**: Create GitHub Actions workflow for CML that:
-
-  * [ ] Trains model on workflow runner
-  * [x] Generates performance metrics
-  * [ ] Creates visualizations/plots
-  * [x] Comments results on PR
-* [x] **CML Metrics Output**: Document format and sample output of CML metrics
-* [ ] **CML Plots**: Generate sample plots and document in CML workflow
-* [x] **Model Comparison**: Create CML output showing comparison of current vs. baseline model
-* [x] **Workflow Documentation**: Document CML workflow setup and customization
-### 2.1 Automated Docker Builds
-
-- **Status:** Completed
-- **Repo evidence:**
-  - `.github/workflows/docker-publish.yaml`
-  - `dockerfiles/Dockerfile`
-- **Screenshot evidence:**
-  - `reports/figures/screenshots/docker_workflow_triggers.png`
-  - `reports/figures/screenshots/docker_workflow_green.png`
-
-The Docker workflow builds the project image using the existing multi-stage Dockerfile from Phase 2. It is configured to run on pushes to `main`, version tags, pull requests to `main`, and manual workflow dispatch. This verifies that the container can be built automatically as part of the CI/CD pipeline.
-
-### 2.2 Continuous Machine Learning (CML)
-
-* **Status:** Completed
-* **Repo evidence:**
-
-  * `.github/workflows/cml.yml`
-  * `reports/cml_report.md`
-  * `scripts/profile_training.py`
-  * `reports/profiling/training_cpu_profile.txt`
-  * `reports/profiling/training_memory_usage.txt`
-* **Screenshot evidence:** `reports/figures/screenshots/cml_pr_comment.png`
-
-The CML workflow posts a model training report to pull requests so reviewers can inspect model performance before merging. The report includes validation RMSE and MAE values for the baseline model, Random Forest, Gradient Boosting, and Prophet demo model, along with the selected champion model. Profiling was cleaned up into a standalone script at `scripts/profile_training.py`, and the generated CPU and memory profiling outputs are saved under `reports/profiling/`.
-
-### CML Report Metrics Summary
-
-The CML report includes the following model results:
-
-| Model              | Validation RMSE | Validation MAE |
-| ------------------ | --------------: | -------------: |
-| Baseline           |        50,753.3 |        9,277.3 |
-| Random Forest      |        42,479.0 |        8,577.7 |
-| Gradient Boosting  |        42,875.5 |        8,105.6 |
-| Prophet demo model |           515.8 |          326.1 |
-
-The selected champion model is **Random Forest** with validation RMSE **42,479.0**.
-
-=======
 - [x] **Automated Docker Builds**: Configure Docker build pipeline triggered by:
   - [x] Commits to main branch
   - [x] Version tags
@@ -146,7 +50,6 @@ The selected champion model is **Random Forest** with validation RMSE **42,479.0
 - [ ] **CML Plots**: Generate sample plots and document in CML workflow
 - [ ] **Model Comparison**: Create CML output showing comparison of current vs. baseline model
 - [ ] **Workflow Documentation**: Document CML workflow setup and customization
->>>>>>> Stashed changes
 
 ---
 
@@ -159,6 +62,7 @@ The selected champion model is **Random Forest** with validation RMSE **42,479.0
   - [x] Cloud Run
   - [x] Cloud Functions
   - [x] Compute Engine
+
 - [x] **Artifact Registry**: Set up Artifact Registry for storing Docker images
   - [x] Create repository in Artifact Registry
   - [x] Configure authentication from CI/CD
@@ -169,8 +73,45 @@ The selected champion model is **Random Forest** with validation RMSE **42,479.0
   - [x] Create training container image
   - [x] Configure training job specification
   - [x] Document how to submit training jobs
+  ![alt text](gcp-job-model-bucket-landing.png)
+
+First setup a bucket to store your data and trained model.
+Navigate to GCP Console homepage -> Cloud Storage -> Create
+Set a name for your bucket, location should be us-central1, storage class standard, access control uniform
+
+Verify the bucket exists
+gcloud storage ls
+
+push your data to the bucket using the google cloud site interface
+
+You can submit a job with the following command:
+gcloud ai custom-jobs create \
+    --region=us-central1 \
+    --display-name=mlops489-train \
+    --config=config_cpu.yaml \
+    --service-account=trainer-sa@<project-id>.iam.gserviceaccount.com
+
+To Watch the job, you stream the jogs directly to your terminal, and you can also check the logs directly on the google cloud
+
+gcloud ai custom-jobs stream-logs <job-id> --region=us-central1
+
+Once the job is finished, it should show up as green as shown in the following screenshots. The trained model is stored in the cloud storage bucket
   ![alt text](gcp-training-job-done-1.png)
   ![alt text](gcp-training-job-done-2.png)
+
+Cleaning up all jobs with the following commands:
+
+Find any running jobs
+gcloud ai custom-jobs list --region=us-central1 \
+    --filter="state:JOB_STATE_RUNNING OR state:JOB_STATE_PENDING"
+
+Cancel the running job
+gcloud ai custom-jobs cancel <job-id> --region=us-central1
+
+Delete all instances
+gcloud compute instances list
+gcloud compute instances delete mlops489-train --zone=us-central1-a --quiet
+
 - [ ] **Compute Engine Training (Option B)**: Set up training on Compute Engine instance
   - [ ] Create VM instance with GPU if needed
   - [ ] Document SSH access and training process
