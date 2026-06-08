@@ -33,6 +33,6 @@ COPY . .
 # Install the package itself without reinstalling dependencies
 RUN pip install --user --no-deps -e .
 
-EXPOSE 8000
+EXPOSE 8080
 
 ENTRYPOINT ["python", "-u", "src/mlops_se489/models/train_model.py"]
