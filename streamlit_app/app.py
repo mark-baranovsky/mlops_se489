@@ -4,11 +4,7 @@ import pandas as pd
 import requests
 import streamlit as st
 
-
-API_URL = os.getenv(
-    "API_URL",
-    "https://retail-demand-api-699949078927.us-central1.run.app/predict",
-)
+API_URL = "https://retail-demand-api-699949078927.us-central1.run.app"
 
 FEATURE_COLS = [
     "lag_1_week_demand",
