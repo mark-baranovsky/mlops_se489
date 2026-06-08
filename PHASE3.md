@@ -7,46 +7,125 @@ Phase 3 implements continuous integration/continuous deployment (CI/CD) pipeline
 
 ## 1. Continuous Integration & Testing
 
-- [ ] **Unit Tests**: Write pytest test scripts for data processing and model components
-- [ ] **Integration Tests**: Create integration tests for full training pipeline
+- [x] **Unit Tests**: Write pytest test scripts for data processing and model components
+- [x] **Integration Tests**: Create integration tests for full training pipeline
 - [ ] **Test Coverage**: Aim for >80% code coverage with pytest-cov
-- [ ] **GitHub Actions - Tests**: Create workflow for running tests on every push
-  - [ ] Trigger on: push to main/develop branches and PRs
-  - [ ] Test across multiple Python versions if applicable
-  - [ ] Report coverage metrics
-- [ ] **GitHub Actions - Code Quality**: Create workflow for:
-  - [ ] Running ruff linter
-  - [ ] Type checking with mypy
-  - [ ] Formatting checks
-- [ ] **GitHub Actions - Docker Build**: Create workflow for building Docker image
-  - [ ] Build on PR and main branch push
-  - [ ] Test built image
-- [ ] **Pre-commit Hooks**: Set up pre-commit hooks for:
-  - [ ] Formatting (black/ruff)
-  - [ ] Linting
-  - [ ] Type checking
-  - [ ] Trailing whitespace
-- [ ] **Test Documentation**: Document how to run tests locally and in CI
+- [x] **GitHub Actions - Tests**: Create workflow for running tests on every push
+  - [x] Trigger on: push to main/develop branches and PRs
+  - [x] Test across multiple Python versions if applicable
+  - [x] Report coverage metrics
+- [x] **GitHub Actions - Code Quality**: Create workflow for:
+  - [x] Running ruff linter
+  - [x] Type checking with mypy
+  - [x] Formatting checks
+- [x] **GitHub Actions - Docker Build**: Create workflow for building Docker image
+  - [x] Build on PR and main branch push
+  - [x] Test built image
+- [x] **Pre-commit Hooks**: Set up pre-commit hooks for:
+  - [x] Formatting (black/ruff)
+  - [x] Linting
+  - [x] Type checking
+  - [x] Trailing whitespace
+- [x] **Test Documentation**: Document how to run tests locally and in CI
+### 1.1 Unit Testing with pytest
 
+- **Status:** Completed
+- **Repo evidence:** `tests/`
+- **Screenshot evidence:** `reports/figures/screenshots/local_pytest_coverage.png`
+
+Pytest tests were verified for data processing, feature engineering, model, training, prediction, evaluation, and utility components. The test command runs with coverage reporting so the team can see which modules are covered and where future test improvements are needed.
+
+### 1.2 GitHub Actions CI Workflow
+
+- **Status:** Completed
+- **Repo evidence:**
+  - `.github/workflows/tests.yml`
+  - `.github/workflows/code-quality.yml`
+  - `.github/workflows/ci.yml`
+- **Screenshot evidence:** `reports/figures/screenshots/github_actions_green.png`, `reports/figures/screenshots/local_ruff_mypy_passed.png`
+
+GitHub Actions workflows were added for automated testing and code quality checks. The workflows run pytest, Ruff linting, Ruff formatting checks, and mypy type checking on pull requests and pushes. The legacy CI workflow was also fixed so it checks production code, scripts, and tests instead of failing on notebook files.
+
+### 1.3 Pre-commit Hooks
+
+- **Status:** Completed
+- **Repo evidence:** `.pre-commit-config.yaml`
+- **Screenshot evidence:** `reports/figures/screenshots/precommit_passed.png`
+
+
+### Local CI/Test Commands
+
+To run the same checks locally before opening a pull request:
+
+```bash
+python3 -m pytest tests/ -v --cov=src --cov-report=term-missing
+python3 -m ruff check src scripts tests
+python3 -m ruff format --check src scripts tests
+python3 -m mypy src/mlops_se489 --ignore-missing-imports
+pre-commit run --all-files
+```
+
+GitHub Actions automatically runs automated tests, linting, formatting checks, type checks, and pre-commit-style validation on pull requests and pushes. The workflows test Python 3.11 and Python 3.12.
 ---
 
 ## 2. Continuous Docker Building & CML
 
-- [ ] **Automated Docker Builds**: Configure Docker build pipeline triggered by:
-  - [ ] Commits to main branch
-  - [ ] Version tags
-  - [ ] Manual workflow dispatch
-- [ ] **Docker Push**: Implement push to container registry (Docker Hub, GitHub Container Registry, or GCP)
-- [ ] **CML Initialization**: Initialize CML in repository
-- [ ] **CML Workflow**: Create GitHub Actions workflow for CML that:
-  - [ ] Trains model on workflow runner
-  - [ ] Generates performance metrics
-  - [ ] Creates visualizations/plots
-  - [ ] Comments results on PR
-- [ ] **CML Metrics Output**: Document format and sample output of CML metrics
-- [ ] **CML Plots**: Generate sample plots and document in CML workflow
-- [ ] **Model Comparison**: Create CML output showing comparison of current vs. baseline model
-- [ ] **Workflow Documentation**: Document CML workflow setup and customization
+* [x] **Automated Docker Builds**: Configure Docker build pipeline triggered by:
+
+  * [x] Commits to main branch
+  * [x] Version tags
+  * [x] Manual workflow dispatch
+* [ ] **Docker Push**: Implement push to container registry (Docker Hub, GitHub Container Registry, or GCP)
+* [x] **CML Initialization**: Initialize CML in repository
+* [x] **CML Workflow**: Create GitHub Actions workflow for CML that:
+
+  * [ ] Trains model on workflow runner
+  * [x] Generates performance metrics
+  * [ ] Creates visualizations/plots
+  * [x] Comments results on PR
+* [x] **CML Metrics Output**: Document format and sample output of CML metrics
+* [ ] **CML Plots**: Generate sample plots and document in CML workflow
+* [x] **Model Comparison**: Create CML output showing comparison of current vs. baseline model
+* [x] **Workflow Documentation**: Document CML workflow setup and customization
+### 2.1 Automated Docker Builds
+
+- **Status:** Completed
+- **Repo evidence:**
+  - `.github/workflows/docker-publish.yaml`
+  - `dockerfiles/Dockerfile`
+- **Screenshot evidence:**
+  - `reports/figures/screenshots/docker_workflow_triggers.png`
+  - `reports/figures/screenshots/docker_workflow_green.png`
+
+The Docker workflow builds the project image using the existing multi-stage Dockerfile from Phase 2. It is configured to run on pushes to `main`, version tags, pull requests to `main`, and manual workflow dispatch. This verifies that the container can be built automatically as part of the CI/CD pipeline.
+
+### 2.2 Continuous Machine Learning (CML)
+
+* **Status:** Completed
+* **Repo evidence:**
+
+  * `.github/workflows/cml.yml`
+  * `reports/cml_report.md`
+  * `scripts/profile_training.py`
+  * `reports/profiling/training_cpu_profile.txt`
+  * `reports/profiling/training_memory_usage.txt`
+* **Screenshot evidence:** `reports/figures/screenshots/cml_pr_comment.png`
+
+The CML workflow posts a model training report to pull requests so reviewers can inspect model performance before merging. The report includes validation RMSE and MAE values for the baseline model, Random Forest, Gradient Boosting, and Prophet demo model, along with the selected champion model. Profiling was cleaned up into a standalone script at `scripts/profile_training.py`, and the generated CPU and memory profiling outputs are saved under `reports/profiling/`.
+
+### CML Report Metrics Summary
+
+The CML report includes the following model results:
+
+| Model              | Validation RMSE | Validation MAE |
+| ------------------ | --------------: | -------------: |
+| Baseline           |        50,753.3 |        9,277.3 |
+| Random Forest      |        42,479.0 |        8,577.7 |
+| Gradient Boosting  |        42,875.5 |        8,105.6 |
+| Prophet demo model |           515.8 |          326.1 |
+
+The selected champion model is **Random Forest** with validation RMSE **42,479.0**.
+
 
 ---
 
@@ -133,9 +212,12 @@ Phase 3 implements continuous integration/continuous deployment (CI/CD) pipeline
 - [ ] **Screenshots/Demos**: Add:
   - [ ] Cloud Run dashboard screenshot
   - [ ] Monitoring dashboard screenshot
-  - [ ] Streamlit/Gradio app screenshot
+  - [x] Streamlit/Gradio app screenshot
+          ![Streamlit/HF Space App](reports/figures/screenshots/hf_space_result_1.png)
+          ![Streamlit/HF Space App](reports/figures/screenshots/hf_space_result_2.png)
   - [ ] API response example
-  - [ ] CML workflow output sample
+  - [x] CML workflow output sample
+            ![CML Sample](github_action_auto_cml_model_training/png)
 - [ ] **Troubleshooting Guide**: Document solutions for:
   - [ ] Common deployment errors
   - [ ] Authentication issues

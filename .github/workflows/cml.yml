@@ -1,0 +1,51 @@
+name: CML Model Report
+
+on:
+  pull_request:
+    branches:
+      - main
+      - dev
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  cml-report:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install CML
+        run: npm install -g @dvcorg/cml
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -r requirements_dev.txt
+
+      - name: Train model
+        env:
+          FEATURES_PATH: data/processed/cml_sample_features.parquet
+        run: |
+          python notebooks/05_model_training_product_demand.py
+
+      - name: Generate CML report and plots
+        env:
+          FEATURES_PATH: data/processed/cml_sample_features.parquet
+        run: |
+          python scripts/cml_train.py
+
+      - name: Post CML report to PR
+        env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: cml comment create reports/cml_report.md

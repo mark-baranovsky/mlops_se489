@@ -19,7 +19,14 @@ import pstats
 import ipdb
 
 BASE_DIR      = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-FEATURES_PATH = os.path.join(BASE_DIR, "data", "processed", "gold_weekly_product_demand_features.parquet")
+DEFAULT_FEATURES_PATH = os.path.join(
+    BASE_DIR, "data", "processed", "gold_weekly_product_demand_features.parquet",
+)
+
+FEATURES_PATH = os.environ.get("FEATURES_PATH", DEFAULT_FEATURES_PATH)
+# github sanity check
+if not os.path.isabs(FEATURES_PATH):
+    FEATURES_PATH = os.path.join(BASE_DIR, FEATURES_PATH)
 MODELS_DIR    = os.path.join(BASE_DIR, "models")
 SPLIT_DATE    = "2016-10-01"
 
@@ -110,6 +117,11 @@ def log_prophet_results(prophet_res, SPLIT_DATE):
 
 @memory_profiler.profile
 def model_training():
+
+    print(f"FEATURES_PATH env : {os.environ.get('FEATURES_PATH')}")
+    print(f"Features file     : {FEATURES_PATH}")
+    print(f"File exists        : {os.path.exists(FEATURES_PATH)}")
+
     print(f"Features file : {FEATURES_PATH}")
     print(f"Split date    : {SPLIT_DATE}")
 

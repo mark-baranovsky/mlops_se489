@@ -1,0 +1,35 @@
+name: aApp to HF Space
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+      - documentation_p3
+
+  pull_request:
+    branches:
+      - dev
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy-hf-space:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Hugging Face Space
+        uses: huggingface/hub-sync@main
+        with:
+          github_repo_id: ${{ github.repository }}
+          huggingface_repo_id: johnblaszczak419/retail-demand-forecasting
+          repo_type: space
+          space_sdk: docker
+          hf_token: ${{ secrets.HF_TOKEN }}
+          subdirectory: hf_space
