@@ -265,9 +265,12 @@ gcloud compute instances delete mlops489-train --zone=us-central1-a --quiet
 - [ ] **Screenshots/Demos**: Add:
   - [ ] Cloud Run dashboard screenshot
   - [ ] Monitoring dashboard screenshot
-  - [ ] Streamlit/Gradio app screenshot
+  - [x] Streamlit/Gradio app screenshot
+          ![Streamlit/HF Space App](reports/figures/screenshots/hf_space_result_1.png)
+          ![Streamlit/HF Space App](reports/figures/screenshots/hf_space_result_2.png)
   - [ ] API response example
-  - [ ] CML workflow output sample
+  - [x] CML workflow output sample
+            ![CML Sample](github_action_auto_cml_model_training/png)
 - [ ] **Troubleshooting Guide**: Document solutions for:
   - [ ] Common deployment errors
   - [ ] Authentication issues

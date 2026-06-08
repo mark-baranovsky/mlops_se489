@@ -1,0 +1,14 @@
+steps:
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "build",
+        "-f",
+        "dockerfiles/Dockerfile.api",
+        "-t",
+        "us-central1-docker.pkg.dev/mlops-se489-retail-498706/retail-demand-images/retail-demand-api:cloudrun",
+        "."
+      ]
+
+images:
+  - "us-central1-docker.pkg.dev/mlops-se489-retail-498706/retail-demand-images/retail-demand-api:cloudrun"
