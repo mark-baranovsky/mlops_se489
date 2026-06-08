@@ -70,6 +70,7 @@ GitHub Actions automatically runs automated tests, linting, formatting checks, t
 
 ## 2. Continuous Docker Building & CML
 
+<<<<<<< Updated upstream
 * [x] **Automated Docker Builds**: Configure Docker build pipeline triggered by:
 
   * [x] Commits to main branch
@@ -126,34 +127,59 @@ The CML report includes the following model results:
 
 The selected champion model is **Random Forest** with validation RMSE **42,479.0**.
 
+=======
+- [x] **Automated Docker Builds**: Configure Docker build pipeline triggered by:
+  - [x] Commits to main branch
+  - [x] Version tags
+  - [x] Manual workflow dispatch
+- [x] **Docker Push**: Implement push to container registry (Docker Hub, GitHub Container Registry, or GCP)
+![alt text](image.png)
+![alt text](gcp-artifact-registry-1.png)
+![alt text](gcp-artifact-registry-2.png)
+- [ ] **CML Initialization**: Initialize CML in repository
+- [ ] **CML Workflow**: Create GitHub Actions workflow for CML that:
+  - [ ] Trains model on workflow runner
+  - [ ] Generates performance metrics
+  - [ ] Creates visualizations/plots
+  - [ ] Comments results on PR
+- [ ] **CML Metrics Output**: Document format and sample output of CML metrics
+- [ ] **CML Plots**: Generate sample plots and document in CML workflow
+- [ ] **Model Comparison**: Create CML output showing comparison of current vs. baseline model
+- [ ] **Workflow Documentation**: Document CML workflow setup and customization
+>>>>>>> Stashed changes
 
 ---
 
 ## 3. Deployment on GCP
 
-- [ ] **GCP Project Setup**: Create GCP project and enable necessary APIs
-- [ ] **Service Account**: Create service account with appropriate permissions for:
-  - [ ] Artifact Registry
-  - [ ] Vertex AI
-  - [ ] Cloud Run
-  - [ ] Cloud Functions
-  - [ ] Compute Engine
-- [ ] **Artifact Registry**: Set up Artifact Registry for storing Docker images
-  - [ ] Create repository in Artifact Registry
-  - [ ] Configure authentication from CI/CD
-  - [ ] Push Docker images to registry
-- [ ] **Vertex AI Training (Option A)**: Set up custom training on Vertex AI
-  - [ ] Create training container image
-  - [ ] Configure training job specification
-  - [ ] Document how to submit training jobs
+- [x] **GCP Project Setup**: Create GCP project and enable necessary APIs
+- [x] **Service Account**: Create service account with appropriate permissions for:
+  - [x] Artifact Registry
+  - [x] Vertex AI
+  - [x] Cloud Run
+  - [x] Cloud Functions
+  - [x] Compute Engine
+- [x] **Artifact Registry**: Set up Artifact Registry for storing Docker images
+  - [x] Create repository in Artifact Registry
+  - [x] Configure authentication from CI/CD
+  - [x] Push Docker images to registry
+  ![alt text](gcp-artifact-registry-1.png)
+  ![alt text](gcp-artifact-registry-2.png)
+- [x] **Vertex AI Training (Option A)**: Set up custom training on Vertex AI
+  - [x] Create training container image
+  - [x] Configure training job specification
+  - [x] Document how to submit training jobs
+  ![alt text](gcp-training-job-done-1.png)
+  ![alt text](gcp-training-job-done-2.png)
 - [ ] **Compute Engine Training (Option B)**: Set up training on Compute Engine instance
   - [ ] Create VM instance with GPU if needed
   - [ ] Document SSH access and training process
   - [ ] Set up instance for automated training
-- [ ] **Model Registry**: Store trained models in GCS bucket with versioning
-  - [ ] Create GCS bucket for models
-  - [ ] Implement model upload from training
-  - [ ] Document model retrieval process
+- [x] **Model Registry**: Store trained models in GCS bucket with versioning
+  - [x] Create GCS bucket for models
+  - [x] Implement model upload from training
+  - [x] Document model retrieval process
+  ![alt text](gcp-training-job-done-3.png)
 - [ ] **FastAPI Service**: Create FastAPI application for model serving
   - [ ] Define inference endpoint(s)
   - [ ] Implement request validation
