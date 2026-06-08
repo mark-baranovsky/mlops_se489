@@ -213,7 +213,8 @@ The selected champion model is **Random Forest** with validation RMSE **42,479.0
   - [ ] Cloud Run dashboard screenshot
   - [ ] Monitoring dashboard screenshot
   - [x] Streamlit/Gradio app screenshot
-          ![Streamlit App](reports/figures/screenshots/hf_space_sc.png.png)
+          ![Streamlit/HF Space App](reports/figures/screenshots/hf_space_result_1.png)
+          ![Streamlit/HF Space App](reports/figures/screenshots/hf_space_result_2.png)
   - [ ] API response example
   - [x] CML workflow output sample
             ![CML Sample](github_action_auto_cml_model_training/png)
