@@ -6,6 +6,11 @@ on:
       - main
       - dev
       - documentation_p3
+
+  pull_request:
+    branches:
+      - dev
+      - main
   workflow_dispatch:
 
 permissions:
