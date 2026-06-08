@@ -14,11 +14,9 @@ except ImportError:
 
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-FEATURES_PATH = os.path.join(
-    BASE_DIR,
-    "data",
-    "processed",
-    "gold_weekly_product_demand_features.parquet",
+FEATURES_PATH = os.environ.get(
+    "FEATURES_PATH",
+    os.path.join(BASE_DIR, "data", "processed", "gold_weekly_product_demand_features.parquet"),
 )
 MODELS_DIR = os.path.join(BASE_DIR, "models")
 CHAMPION_PATH = os.path.join(MODELS_DIR, "champion_model.pkl")
