@@ -1,0 +1,6 @@
+run_name,model,train_rmse,val_rmse,val_mae,is_champion,run_id
+prophet_top_product,prophet,,515.7539282878728,326.0548865277409,false,329b6cbb6aeb4ce38c1b9718be85cfd8
+hydra_random_forest,hydra_random_forest,42411.64379573025,42138.4993954739,8596.59546402446,,301b6efb0a0c4bcda48ddf4b21e0bac6
+random_forest,random_forest,42278.392044763765,42478.97880064063,8577.744874370785,true,4b00227a6a614afcaba8d073fed61cf9
+gradient_boosting,gradient_boosting,39050.857662261566,42898.72642277626,8106.342086818985,false,f7bb50b6a6cb420c8209a52d6cdad04f
+baseline_mean_lag,baseline_mean_lag,54470.32997549151,50753.3135883997,9277.328618742535,false,874b26cf8cc34370944572ac67aae5bd

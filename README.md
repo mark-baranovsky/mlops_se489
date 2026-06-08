@@ -104,10 +104,10 @@ data/raw/Historical Product Demand.csv
 The preferred pipeline commands use the `Makefile`.
 
 ```bash
-make data
-make features
-make train
-make predict
+make data      # ingest and clean raw CSV
+make features  # build weekly features
+make train     # train the champion model
+make predict   # generate next-week demand predictions
 ```
 
 Equivalent Python module commands:
@@ -122,12 +122,12 @@ python -m mlops_se489.models.predict_model
 Pipeline outputs include:
 
 ```text
-data/interim/bronze_product_demand_raw.parquet
-data/interim/silver_product_demand_clean.parquet
-data/processed/gold_weekly_product_demand.parquet
-data/processed/gold_weekly_product_demand_features.parquet
-models/champion_model.pkl
-data/processed/demand_predictions.parquet
+- data/interim/bronze_product_demand_raw.parquet` — bronze ingestion output
+- data/interim/silver_product_demand_clean.parquet` — cleaned silver dataset
+- data/processed/gold_weekly_product_demand.parquet` — aggregated weekly demand
+- data/processed/gold_weekly_product_demand_features.parquet` — engineered features dataset
+- models/champion_model.pkl` — trained champion model
+- data/processed/demand_predictions.parquet` — batch demand predictions
 ```
 
 ---
