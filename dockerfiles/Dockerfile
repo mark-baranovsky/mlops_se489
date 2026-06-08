@@ -35,4 +35,6 @@ RUN pip install --user --no-deps -e .
 
 EXPOSE 8080
 
+CMD ["sh", "-c", "uvicorn mlops_se489.api.fastapi:app --host 0.0.0.0 --port ${PORT:-8080}"]
+
 ENTRYPOINT ["python", "-u", "src/mlops_se489/models/train_model.py"]
