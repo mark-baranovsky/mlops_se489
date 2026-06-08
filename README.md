@@ -430,6 +430,13 @@ mlops_se489/
 
 ---
 
+## To Check Online HF Space 
+* Link:https://johnblaszczak419-retail-demand-forecasting.hf.space/
+
+##Video Demo
+* https://drive.google.com/file/d/1vxB6As5pQCj1G5Ma7IzszZvb4vlgxI0g/view?usp=sharing
+
+
 ## License
 
 MIT
