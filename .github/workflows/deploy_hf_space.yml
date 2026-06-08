@@ -24,31 +24,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install project dependencies
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install -r requirements.txt
-          python -m pip install -e ".[dev]"
-
-      - name: Run full training pipeline
-        run: |
-          python notebooks/00_setup.py
-          python notebooks/01_bronze_ingestion_product_demand.py
-          python notebooks/02_silver_cleaning_product_demand.py
-          python notebooks/03_gold_weekly_aggregation_product_demand.py
-          python notebooks/04_gold_feature_engineering_product_demand.py
-          python notebooks/05_model_training_product_demand.py
-
-      - name: Prepare Hugging Face Space files
-        run: |
-          mkdir -p hf_space/models
-          cp models/champion_model.pkl hf_space/models/champion_model.pkl
-
       - name: Deploy to Hugging Face Space
         uses: huggingface/hub-sync@main
         with:

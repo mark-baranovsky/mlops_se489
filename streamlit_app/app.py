@@ -1,91 +1,90 @@
 import os
+
+import pandas as pd
 import requests
 import streamlit as st
 
-API_URL = os.getenv("API_URL", "http://localhost:8888/predict")
 
-st.set_page_config(
-    page_title="Product Demand Predictor",
-    layout="centered",
-)
+API_URL = os.getenv("API_URL")
 
-st.title("📦 Product Demand Predictor")
-st.write(
-    "This Streamlit app sends product demand features to your deployed "
-    "FastAPI or Cloud Function prediction endpoint."
-)
+FEATURE_COLS = [
+    "lag_1_week_demand",
+    "lag_2_week_demand",
+    "lag_3_week_demand",
+    "lag_4_week_demand",
+    "lag_52_week_demand",
+    "rolling_4wk_avg_demand",
+    "rolling_4wk_std_demand",
+    "rolling_8wk_avg_demand",
+    "demand_momentum",
+    "yoy_demand_change",
+    "yoy_demand_pct_change",
+    "year",
+    "month",
+    "quarter",
+    "week_of_year",
+    "is_quarter_end_week",
+    "is_peak_month",
+    "order_count",
+]
 
-with st.sidebar:
-    st.header("API Settings")
-    api_url = st.text_input("Prediction API URL", value=API_URL)
-    st.caption("Example: http://localhost:8888/predict or your Cloud Function URL")
 
-st.subheader("Input Features")
+st.title("📦 Retail Demand Forecasting")
 
-lag_1_week_demand = st.number_input("Lag 1 Week Demand", value=100.0)
-lag_2_week_demand = st.number_input("Lag 2 Week Demand", value=95.0)
-lag_3_week_demand = st.number_input("Lag 3 Week Demand", value=90.0)
-lag_4_week_demand = st.number_input("Lag 4 Week Demand", value=85.0)
-lag_52_week_demand = st.number_input("Lag 52 Week Demand", value=100.0)
+st.write("This app sends feature values to the deployed FastAPI model endpoint.")
 
-rolling_4wk_avg_demand = st.number_input("Rolling 4 Week Avg Demand", value=92.5)
-rolling_4wk_std_demand = st.number_input("Rolling 4 Week Std Demand", value=10.0)
-rolling_8wk_avg_demand = st.number_input("Rolling 8 Week Avg Demand", value=90.0)
+st.sidebar.header("Input features")
 
-demand_momentum = st.number_input("Demand Momentum", value=5.0)
-yoy_demand_change = st.number_input("Year-over-Year Demand Change", value=0.0)
-yoy_demand_pct_change = st.number_input("Year-over-Year Demand Percent Change", value=0.0)
-
-year = st.number_input("Year", value=2016, step=1)
-month = st.number_input("Month", value=10, min_value=1, max_value=12, step=1)
-quarter = st.number_input("Quarter", value=4, min_value=1, max_value=4, step=1)
-week_of_year = st.number_input("Week of Year", value=40, min_value=1, max_value=53, step=1)
-
-is_quarter_end_week = st.selectbox("Is Quarter End Week?", [0, 1])
-is_peak_month = st.selectbox("Is Peak Month?", [0, 1])
-order_count = st.number_input("Order Count", value=10.0)
-
-payload = {
-    "lag_1_week_demand": lag_1_week_demand,
-    "lag_2_week_demand": lag_2_week_demand,
-    "lag_3_week_demand": lag_3_week_demand,
-    "lag_4_week_demand": lag_4_week_demand,
-    "lag_52_week_demand": lag_52_week_demand,
-    "rolling_4wk_avg_demand": rolling_4wk_avg_demand,
-    "rolling_4wk_std_demand": rolling_4wk_std_demand,
-    "rolling_8wk_avg_demand": rolling_8wk_avg_demand,
-    "demand_momentum": demand_momentum,
-    "yoy_demand_change": yoy_demand_change,
-    "yoy_demand_pct_change": yoy_demand_pct_change,
-    "year": int(year),
-    "month": int(month),
-    "quarter": int(quarter),
-    "week_of_year": int(week_of_year),
-    "is_quarter_end_week": int(is_quarter_end_week),
-    "is_peak_month": int(is_peak_month),
-    "order_count": order_count,
+inputs = {
+    "lag_1_week_demand": st.sidebar.number_input("Lag 1 week demand", value=1000.0),
+    "lag_2_week_demand": st.sidebar.number_input("Lag 2 week demand", value=950.0),
+    "lag_3_week_demand": st.sidebar.number_input("Lag 3 week demand", value=900.0),
+    "lag_4_week_demand": st.sidebar.number_input("Lag 4 week demand", value=875.0),
+    "lag_52_week_demand": st.sidebar.number_input("Lag 52 week demand", value=1000.0),
+    "rolling_4wk_avg_demand": st.sidebar.number_input(
+        "Rolling 4 week average demand",
+        value=930.0,
+    ),
+    "rolling_4wk_std_demand": st.sidebar.number_input(
+        "Rolling 4 week standard deviation",
+        value=50.0,
+    ),
+    "rolling_8wk_avg_demand": st.sidebar.number_input(
+        "Rolling 8 week average demand",
+        value=920.0,
+    ),
+    "demand_momentum": st.sidebar.number_input("Demand momentum", value=25.0),
+    "yoy_demand_change": st.sidebar.number_input("YoY demand change", value=100.0),
+    "yoy_demand_pct_change": st.sidebar.number_input(
+        "YoY demand percent change",
+        value=0.10,
+    ),
+    "year": st.sidebar.number_input("Year", value=2017, step=1),
+    "month": st.sidebar.number_input("Month", min_value=1, max_value=12, value=6),
+    "quarter": st.sidebar.number_input("Quarter", min_value=1, max_value=4, value=2),
+    "week_of_year": st.sidebar.number_input(
+        "Week of year",
+        min_value=1,
+        max_value=53,
+        value=25,
+    ),
+    "is_quarter_end_week": int(st.sidebar.checkbox("Is quarter end week?")),
+    "is_peak_month": int(st.sidebar.checkbox("Is peak month?")),
+    "order_count": st.sidebar.number_input("Order count", value=50.0),
 }
 
-st.subheader("Request Payload")
-with st.expander("View JSON sent to API"):
-    st.json(payload)
+input_df = pd.DataFrame([inputs], columns=FEATURE_COLS)
 
-if st.button("Predict Demand"):
-    try:
-        response = requests.post(api_url, json=payload, timeout=30)
+st.subheader("Input Preview")
+st.dataframe(input_df, use_container_width=True)
 
-        if response.ok:
-            result = response.json()
-            st.success("Prediction successful!")
+if st.button("Predict Weekly Demand"):
+    if not API_URL:
+        st.error("Missing API_URL. Add it in Hugging Face Space settings.")
+        st.stop()
 
-            if "predicted_demand" in result:
-                st.metric("Predicted Demand", result["predicted_demand"])
-            else:
-                st.json(result)
-        else:
-            st.error(f"API request failed with status code {response.status_code}")
-            st.text(response.text)
+    response = requests.post(API_URL, json=inputs, timeout=30)
+    response.raise_for_status()
 
-    except requests.exceptions.RequestException as e:
-        st.error("Could not connect to the prediction API.")
-        st.exception(e)
+    prediction = response.json()["prediction"]
+    st.success(f"Predicted weekly order demand: {prediction:,.2f}")
