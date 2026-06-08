@@ -31,5 +31,5 @@ jobs:
           huggingface_repo_id: johnblaszczak419/retail-demand-forecasting
           repo_type: space
           space_sdk: streamlit
-          hf_token: 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
+          hf_token: ${{ secrets.HF_TOKEN }}
           subdirectory: hf_space
