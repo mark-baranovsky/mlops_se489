@@ -37,6 +37,41 @@ Phase 3 implements continuous integration/continuous deployment (CI/CD) pipeline
   - [x] Version tags
   - [x] Manual workflow dispatch
 - [x] **Docker Push**: Implement push to container registry (Docker Hub, GitHub Container Registry, or GCP)
+
+The workflow yaml can be found at .github\workflows\docker-publish.yaml
+
+You first need to creata PAT in Docker Hub by clicking on your avatar -> account settings -> Personal Access Tokens -> Generate New Token. Copy the token right away.
+
+Now navigate to the github repository -> Settings -> Secrets and Variables -> Actions -> New Repository Secret.
+The three secrets you needs are:
+DOCKER_HUB_TOKEN = PAT token you copied
+DOCKER_HUB_USERNAME = your dockerhub username
+DOCKER_HUB_REPOSITORY = your dockerhub repository name
+
+the docker publish yaml triggers on pushes and pulls from main and automagically builds the image and commits them to dockerhub.
+
+In order to get the docker image locally run this command:
+docker pull <your-username>/<your-repo>:latest
+
+Make sure you mount the volumes so the image can use the dataset and save the models.
+You can also changing entrypoint with --entrypoint python and run whatever script you want (eg.) -u -m mlops_se489.data.make_dataset
+
+docker run --rm -it `
+  --entrypoint python `
+  -v ${PWD}/data:/app/data `
+  -v ${PWD}/models:/app/models `
+  mlops_se489 `
+  -u -m mlops_se489.data.make_dataset
+
+# 1. Pull the image
+docker pull your-dockerhub-username/mlops_se489:latest
+
+# 2. Tag it so Compose recognizes it as the local image
+docker tag your-dockerhub-username/mlops_se489:latest mlops_se489:latest
+
+# 3. Run your pipeline
+docker compose up
+
 ![alt text](image.png)
 ![alt text](gcp-artifact-registry-1.png)
 ![alt text](gcp-artifact-registry-2.png)
@@ -63,12 +98,63 @@ Phase 3 implements continuous integration/continuous deployment (CI/CD) pipeline
   - [x] Cloud Functions
   - [x] Compute Engine
 
+  Before you can create an artifact registry, you must enable the gcloud services:
+  gcloud services enable artifactregistry.googleapis.com
+  gcloud services enable cloudbuild.googleapis.com
+
 - [x] **Artifact Registry**: Set up Artifact Registry for storing Docker images
   - [x] Create repository in Artifact Registry
   - [x] Configure authentication from CI/CD
   - [x] Push Docker images to registry
+
+  To create an artifact registry:
+  gcloud artifacts repositories create <repo-name> \
+    --repository-format=docker \
+    --location=us-central1 \
+    --description="MLOps 489 Docker registry"
+
+  To pull the repo, it exists here:
+  <region>-docker.pkg.dev/<project-id>/<repo-name>
+
+  The cloudbuild.yaml allows for the docker images to be built and pushed automatically
+
+  To wire the trigger:
+  Cloud Build -> Triggers -> Create Trigger
+      Region: same as your connection.
+
+    Source: 2nd gen.
+
+    Repository: pick the linked repo from step 3.
+
+    Event: Push to a branch.
+
+    Branch: ^main$.
+
+    Configuration: Cloud Build configuration file.
+
+    Location: Exercises/GCPArtifactRegistry/cloudbuild.yaml.
+
+    Under Substitution variables, add _REGION=us-central1, _REPO=<your-repo-name>, _IMAGE=digits-svc, _TAG=v1.
+
+    Click Create.
+
+  You can see your build in action in the Console -> Cloud Build -> History
+  ![alt text](image.png)
+
+  Verify that the image exists in the artifact registry:
+  gcloud artifacts docker images list \
+    us-central1-docker.pkg.dev/$(gcloud config get-value project)/mlops489-docker \
+    --include-tags
+
   ![alt text](gcp-artifact-registry-1.png)
   ![alt text](gcp-artifact-registry-2.png)
+
+  To pull the built image to your local machine:
+  docker pull us-central1-docker.pkg.dev/<project-id>/mlops489-docker/digits-svc:v1
+
+  Confirm it runs with:
+  docker run --rm us-central1-docker.pkg.dev/<project-id>/mlops489-docker/digits-svc:v1
+
 - [x] **Vertex AI Training (Option A)**: Set up custom training on Vertex AI
   - [x] Create training container image
   - [x] Configure training job specification

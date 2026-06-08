@@ -62,6 +62,20 @@ Batch Prediction              →  data/processed/demand_predictions.parquet
 
 ---
 
+## Phase 3: CI/CD and GCP Deployment
+
+This phase adds continuous Docker image building, Artifact Registry integration, and GCP custom training workflows.
+
+Key Phase 3 artifacts:
+
+* `.github/workflows/docker-publish.yaml` — GitHub Actions workflow that builds and publishes the Docker image from `dockerfiles/Dockerfile`.
+* `cloudbuild.yaml` — Cloud Build configuration for pushing the same image to GCP Artifact Registry.
+* `config_cpu.yaml` — Vertex AI / Agent Platform custom training specification.
+* `PHASE3.md` — detailed Phase 3 documentation with file references, evidence checklist, and deployment notes.
+
+
+---
+
 ## Setup Instructions
 
 ### Prerequisites
